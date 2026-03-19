@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     description: "OS-level futuristic portfolio. SIH 2025 National Winner.",
     type: "website",
   },
+  verification: {
+    other: {
+      "vc-domain-verify": ["rahul-portfolio-vercel.app,8ec0cd39de4d85ffcb4f"],
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
