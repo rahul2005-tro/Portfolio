@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import LoadingScreen from "@/components/LoadingScreen";
+import ScrollReveal from "@/components/ScrollReveal";
 import Hero from "@/components/sections/Hero";
 import About from "@/components/sections/About";
 import Skills from "@/components/sections/Skills";
@@ -32,19 +33,41 @@ export default function HomePage() {
         }}
       >
         <Hero onLaunchOS={() => setOsOpen(true)} />
+
         <SignalWave color="#00ff41" className="opacity-50" />
-        <About />
+        <ScrollReveal direction="up">
+          <About />
+        </ScrollReveal>
+
         <SignalWave color="#00d4ff" className="opacity-40" />
-        <Skills />
+        <ScrollReveal direction="up" delay={0.1}>
+          <Skills />
+        </ScrollReveal>
+
         <SignalWave color="#ff9500" className="opacity-40" />
-        <ProjectWindows />
+        <ScrollReveal direction="left">
+          <ProjectWindows />
+        </ScrollReveal>
+
         <SignalWave color="#00d4ff" className="opacity-35" />
-        <Deployments />
+        <ScrollReveal direction="up">
+          <Deployments />
+        </ScrollReveal>
+
         <SignalWave color="#9f00ff" className="opacity-35" />
-        <Achievements />
+        <ScrollReveal direction="right">
+          <Achievements />
+        </ScrollReveal>
+
         <SignalWave color="#00d4ff" className="opacity-30" />
-        <Experience />
-        <Contact />
+        <ScrollReveal direction="up" delay={0.1}>
+          <Experience />
+        </ScrollReveal>
+
+        <ScrollReveal direction="up" delay={0.15}>
+          <Contact />
+        </ScrollReveal>
+
         <Footer />
 
         <TerminalWidget />

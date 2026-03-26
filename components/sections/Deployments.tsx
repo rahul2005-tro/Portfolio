@@ -8,6 +8,19 @@ import { FaExternalLinkAlt, FaGithub, FaCheckCircle } from "react-icons/fa";
    Add your real Vercel live links here. */
 const DEPLOYMENTS = [
   {
+    title: "TVC Drone Control System",
+    client: "Autonomous Robotics",
+    description:
+      "Thrust Vector Control system for autonomous drone stabilization with PID control loops, sensor fusion (IMU + GPS), and custom flight firmware for real-time attitude correction.",
+    tech: ["JavaScript", "Embedded C", "PID Control", "IMU", "GPS", "Robotics"],
+    live: "#",
+    github: "https://github.com/rahul2005-tro/TVC",
+    category: "Robotics",
+    status: "development",
+    year: "2025",
+    accent: "#bf00ff",
+  },
+  {
     title: "Motor Protection Controller",
     client: "Industrial IoT Client",
     description:
