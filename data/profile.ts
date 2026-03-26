@@ -101,6 +101,15 @@ export const skillCategories: SkillCategory[] = [
 
 export const hardwareProjects: HardwareProject[] = [
   {
+    title: "Rasavijanana — AI Electronic Tongue",
+    description:
+      "SIH 2025 Winner. AI-powered portable electronic tongue for objective taste analysis and phytochemical profiling. Combines NIR spectroscopy, electrochemical sensing, and ML for 99% accurate real-time taste classification.",
+    techStack: ["ESP32", "Raspberry Pi", "ML", "NIR Sensor", "IoT"],
+    github: "https://github.com/rahul2005-tro",
+    badge: "Winner",
+    icon: "🏆",
+  },
+  {
     title: "Smart Water Testing Kit",
     description:
       "Portable IoT device measuring turbidity, pH, TDS, and temperature in real-time. Firebase-powered live dashboard with ESP32 and multi-sensor array.",
@@ -110,29 +119,12 @@ export const hardwareProjects: HardwareProject[] = [
     icon: "💧",
   },
   {
-    title: "AI Acoustic Rail Monitoring",
-    description:
-      "ML-powered acoustic anomaly detection for railway tracks. Classifies rail defects from vibration signatures without physical contact.",
-    techStack: ["Python", "TensorFlow", "Signal Processing", "AI"],
-    badge: "Research",
-    icon: "🛤",
-  },
-  {
     title: "Bike Health Monitoring System",
     description:
       "Real-time embedded diagnostics system for two-wheelers monitoring engine health, vibration patterns, and predictive maintenance alerts.",
     techStack: ["ESP32", "STM32", "Embedded C", "Sensors"],
     badge: "Active",
     icon: "🏍",
-  },
-  {
-    title: "ESP32-CAM YOLOv3 Vision",
-    description:
-      "Real-time object detection pipeline using ESP32-CAM with YOLOv3. Lightweight model optimized for microcontroller edge inference.",
-    techStack: ["ESP32-CAM", "YOLOv3", "Python", "OpenCV"],
-    github: "https://github.com/rahul2005-tro",
-    badge: "Complete",
-    icon: "📷",
   },
   {
     title: "VICHARAH Earth Leakage System",
@@ -146,12 +138,21 @@ export const hardwareProjects: HardwareProject[] = [
 
 export const softwareProjects: SoftwareProject[] = [
   {
-    title: "TevrON Microgrid",
+    title: "TEVRON Microgrid",
     description:
-      "Intelligent microgrid management platform with real-time energy monitoring, load balancing, and predictive analytics dashboard.",
-    techStack: ["React", "Node.js", "Firebase", "AI/ML"],
+      "Intelligent renewable energy analytics platform for microgrids. Real-time IoT monitoring with AI/ML-driven predictive maintenance, anomaly detection, digital twin simulation, and reinforcement learning for load optimization. Supports online, offline, and hybrid modes.",
+    techStack: ["ESP32", "Raspberry Pi", "LoRa", "Python", "ML", "React"],
     github: "https://github.com/rahul2005-tro",
+    live: "https://tevron-microgrid.vercel.app/",
     icon: "⚡",
+  },
+  {
+    title: "ESP32-CAM YOLOv3 Vision",
+    description:
+      "Real-time object detection pipeline using ESP32-CAM with YOLOv3. Lightweight model optimized for microcontroller edge inference.",
+    techStack: ["ESP32-CAM", "YOLOv3", "Python", "OpenCV"],
+    github: "https://github.com/rahul2005-tro",
+    icon: "📷",
   },
   {
     title: "RF Cognisant Environment",
@@ -188,7 +189,7 @@ export const achievements: Achievement[] = [
     year: "2025",
     type: "winner",
     description:
-      "National-level winner among 100,000+ participants. Built an AI-powered embedded system solution addressing a critical national challenge.",
+      "National-level winner among 100,000+ participants. Built Rasavijanana — an AI-powered electronic tongue for objective taste analysis using NIR spectroscopy and electrochemical sensing with 99% accuracy.",
     icon: "🏆",
     org: "Government of India",
   },
@@ -266,14 +267,14 @@ export const featuredProjects: FeaturedProject[] = [
     status: "Deployed",
   },
   {
-    title: "AI Acoustic Rail Monitoring",
-    subtitle: "AI · ML · Signal Processing",
+    title: "Rasavijanana — AI Electronic Tongue",
+    subtitle: "AI · IoT · Spectroscopy · SIH 2025 Winner",
     description:
-      "An AI-powered system that listens to rail vibration patterns to detect anomalies, cracks, and wear in real-time.",
-    techStack: ["Python", "ML Model", "OpenCV", "Signal Processing", "AI"],
-    icon: "🛤",
-    gradient: "from-green-900/40 to-emerald-900/40",
-    status: "Research",
+      "An AI-powered portable electronic tongue for objective taste analysis and phytochemical profiling. Combines NIR spectroscopy, electrochemical sensing, and hybrid ML for 99% accurate classification.",
+    techStack: ["ESP32", "Raspberry Pi", "ML", "Python", "NIR Sensor", "IoT"],
+    icon: "🏆",
+    gradient: "from-yellow-900/40 to-amber-900/40",
+    status: "Deployed",
   },
   {
     title: "Autonomous Drone System",
@@ -290,11 +291,11 @@ export const featuredProjects: FeaturedProject[] = [
 export const timelineItems: TimelineItem[] = [
   {
     period: "2025",
-    title: "Smart India Hackathon — National Winner",
+    title: "SIH 2025 Winner — Rasavijanana",
     organization: "Government of India",
     description:
-      "Led a team to victory at SIH 2025, building an AI-embedded system solution addressing a national engineering challenge.",
-    tags: ["AI", "Embedded Systems", "National Winner"],
+      "Led a team to victory at SIH 2025, building Rasavijanana — an AI-powered electronic tongue for objective taste analysis using NIR spectroscopy and electrochemical sensing.",
+    tags: ["AI", "IoT", "Spectroscopy", "National Winner"],
   },
   {
     period: "2024 — Present",
