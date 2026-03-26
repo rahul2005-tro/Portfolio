@@ -134,18 +134,18 @@ export const hardwareProjects: HardwareProject[] = [
     badge: "Patent",
     icon: "⚡",
   },
-];
-
-export const softwareProjects: SoftwareProject[] = [
   {
     title: "TEVRON Microgrid",
     description:
-      "Intelligent renewable energy analytics platform for microgrids. Real-time IoT monitoring with AI/ML-driven predictive maintenance, anomaly detection, digital twin simulation, and reinforcement learning for load optimization. Supports online, offline, and hybrid modes.",
-    techStack: ["ESP32", "Raspberry Pi", "LoRa", "Python", "ML", "React"],
+      "Intelligent renewable energy analytics platform for microgrids. Real-time IoT monitoring with AI/ML-driven predictive maintenance, anomaly detection, digital twin simulation, and reinforcement learning for load optimization.",
+    techStack: ["ESP32", "Raspberry Pi", "LoRa", "Python", "ML"],
     github: "https://github.com/rahul2005-tro",
-    live: "https://tevron-microgrid.vercel.app/",
-    icon: "⚡",
+    badge: "Live",
+    icon: "🔋",
   },
+];
+
+export const softwareProjects: SoftwareProject[] = [
   {
     title: "ESP32-CAM YOLOv3 Vision",
     description:
