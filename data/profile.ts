@@ -215,7 +215,7 @@ export const achievements: Achievement[] = [
   {
     title: "Finalist",
     event: "StartupTN Ideathon",
-    year: "2024",
+    year: "2025",
     type: "finalist",
     description:
       "Selected finalist for a hardware-based startup concept with real-world market impact in IoT and embedded systems.",
@@ -225,7 +225,7 @@ export const achievements: Achievement[] = [
   {
     title: "Finalist",
     event: "Yukti Innovation Challenge",
-    year: "2024",
+    year: "2025",
     type: "finalist",
     description:
       "National-level innovation challenge finalist presenting research-grade embedded systems work.",
@@ -321,7 +321,7 @@ export const timelineItems: TimelineItem[] = [
     tags: ["ESP32", "Firebase", "IoT", "Dashboard"],
   },
   {
-    period: "2022 — Present",
+    period: "2023 — Present",
     title: "Mechanical Engineering — B.Tech",
     organization: "Engineering University, India",
     description:
