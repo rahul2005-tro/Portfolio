@@ -80,13 +80,16 @@ const BOOT_LOG = [
 ];
 
 /* ─── MAIN LOADING SCREEN ─── */
+// Module-level guard: NEVER reset. Prevents StrictMode double-fire
+// and ensures the boot sequence runs exactly once per full page load.
+let _bootFired = false;
+
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
   const [phase, setPhase] = useState<"rain" | "boot" | "reveal" | "done">("rain");
   const [logLines, setLogLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const [skipHint, setSkipHint] = useState(false);
   const [timestamp, setTimestamp] = useState("");
-  const started = useRef(false);
 
   const heading = useGlitch("RAHUL_G", phase === "boot" || phase === "reveal");
 
@@ -102,10 +105,10 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     return () => window.removeEventListener("keydown", k);
   }, [skipNow]);
 
-  // Phase sequencing — started.current prevents StrictMode double-fire
+  // Phase sequencing — _bootFired prevents StrictMode double-fire
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
+    if (_bootFired) return;
+    _bootFired = true;
 
     setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " "));
 
@@ -129,9 +132,10 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
       clearTimeout(h1);
       clearTimeout(t1);
       clearInterval(lineInterval);
-      started.current = false; // reset so hot-reload works
+      // Do NOT reset _bootFired here — that's what caused the double load
     };
-  }, [onComplete]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (phase === "done") return null;
 

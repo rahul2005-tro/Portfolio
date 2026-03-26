@@ -42,3 +42,5 @@ next-env.d.ts
 
 # Download scripts (temp)
 download_v86.ps1
+
+.vercel

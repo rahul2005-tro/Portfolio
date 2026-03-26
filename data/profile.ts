@@ -205,7 +205,7 @@ export const achievements: Achievement[] = [
   {
     title: "Finalist",
     event: "KPIT Sparkle Innovation Challenge",
-    year: "2024",
+    year: "2026",
     type: "finalist",
     description:
       "Shortlisted as a finalist in KPIT Sparkle for developing an advanced automotive embedded systems solution.",
