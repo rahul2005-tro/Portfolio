@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoadingScreen from "@/components/LoadingScreen";
 import ScrollReveal from "@/components/ScrollReveal";
 import Hero from "@/components/sections/Hero";
@@ -19,6 +19,13 @@ import SignalWave from "@/components/SignalWave";
 export default function HomePage() {
   const [loaded, setLoaded] = useState(false);
   const [osOpen, setOsOpen] = useState(false);
+
+  /* Listen for custom event from terminal / navbar */
+  useEffect(() => {
+    const handler = () => setOsOpen(true);
+    window.addEventListener("launch-dev-env", handler);
+    return () => window.removeEventListener("launch-dev-env", handler);
+  }, []);
 
   return (
     <>

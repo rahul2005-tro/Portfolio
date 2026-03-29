@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { FaGithub, FaLinkedin } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaRocket } from "react-icons/fa";
 
 const navLinks = [
   { label: "About", href: "#about" },
@@ -77,8 +77,18 @@ export default function Navbar() {
           ))}
         </nav>
 
-        {/* Social Icons */}
+        {/* Dev Env + Social Icons */}
         <div className="hidden md:flex items-center gap-4">
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent("launch-dev-env"));
+            }}
+            className="font-mono text-xs tracking-wider text-amber-400 border border-amber-400/40 px-3 py-1.5 rounded-lg
+                       hover:bg-amber-400 hover:text-dark-bg transition-all duration-300
+                       hover:shadow-[0_0_20px_rgba(255,149,0,0.3)] flex items-center gap-1.5"
+          >
+            <FaRocket className="text-[10px]" /> Dev Env
+          </button>
           <a
             href="https://github.com/rahul2005-tro"
             target="_blank"
@@ -128,7 +138,17 @@ export default function Navbar() {
                   {link.label}
                 </button>
               ))}
-              <div className="flex gap-4 pt-2">
+              <div className="flex gap-4 pt-2 items-center">
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent("launch-dev-env"));
+                  }}
+                  className="font-mono text-xs text-amber-400 border border-amber-400/40 px-3 py-1.5 rounded-lg
+                             hover:bg-amber-400 hover:text-dark-bg transition-all flex items-center gap-1.5"
+                >
+                  <FaRocket className="text-[10px]" /> Dev Env
+                </button>
                 <a href="https://github.com/rahul2005-tro" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-neon-green text-xl"><FaGithub /></a>
                 <a href="https://www.linkedin.com/in/rahul-g-840425239/" target="_blank" rel="noopener noreferrer" className="text-slate-400 hover:text-cyber-cyan text-xl"><FaLinkedin /></a>
               </div>

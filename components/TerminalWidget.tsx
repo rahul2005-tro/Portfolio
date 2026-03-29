@@ -45,6 +45,7 @@ export default function TerminalWidget() {
         action: () => [
           "┌─ COMMANDS ───────────────────────────────┐",
           "  help          Show this help menu",
+          "  launch        Launch Dev Environment",
           "  about         About Rahul G",
           "  skills        Navigate to skills section",
           "  projects      Navigate to projects section",
@@ -57,6 +58,20 @@ export default function TerminalWidget() {
           "  clear         Clear terminal",
           "└──────────────────────────────────────────┘",
         ],
+      },
+      launch: {
+        desc: "Launch Dev Environment",
+        action: () => {
+          setTimeout(() => {
+            close();
+            window.dispatchEvent(new CustomEvent("launch-dev-env"));
+          }, 300);
+          return [
+            ">> Launching Dev Environment...",
+            "   Loading RahulOS v2.0...",
+            "   ✓ Terminal, File Explorer, System Monitor ready.",
+          ];
+        },
       },
       about: {
         desc: "About Rahul G",
