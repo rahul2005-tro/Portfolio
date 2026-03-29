@@ -240,7 +240,7 @@ export default function ProjectWindows() {
   }, []);
 
   return (
-    <section id="projects" className="relative py-28 px-6">
+    <section id="projects" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_50%,rgba(0,255,65,0.02),transparent)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10">

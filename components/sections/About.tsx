@@ -11,7 +11,7 @@ const fadeUp = {
 
 export default function About() {
   return (
-    <section id="about" className="relative py-28 px-6">
+    <section id="about" className="relative py-20 sm:py-28 px-4 sm:px-6">
       {/* Decorative glow */}
       <div className="absolute left-0 top-1/3 w-96 h-96 bg-neon-green/3 rounded-full blur-3xl pointer-events-none" />
 

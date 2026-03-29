@@ -49,10 +49,19 @@ body {
   color: #e2e8f0;
   font-family: 'Inter', system-ui, sans-serif;
   overflow-x: hidden;
-  cursor: none;
 }
 
-/* Cursor */
+/* Custom cursor only on desktop with fine pointer (mouse) */
+@media (pointer: fine) {
+  body { cursor: none; }
+}
+
+/* All sections get scroll-margin for fixed navbar */
+section[id] {
+  scroll-margin-top: 80px;
+}
+
+/* Cursor — hidden on touch devices */
 .cursor-dot {
   width: 10px;
   height: 10px;
@@ -76,6 +85,10 @@ body {
   z-index: 9998;
   transform: translate(-50%, -50%);
   transition: all 0.15s ease;
+}
+
+@media (pointer: coarse) {
+  .cursor-dot, .cursor-ring { display: none !important; }
 }
 
 /* Glow utilities */

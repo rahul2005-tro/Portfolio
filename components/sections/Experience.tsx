@@ -5,7 +5,7 @@ import { timelineItems } from "@/data/profile";
 
 export default function Experience() {
   return (
-    <section id="experience" className="relative py-28 px-6">
+    <section id="experience" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute left-0 top-0 w-96 h-96 bg-neon-purple/3 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10">

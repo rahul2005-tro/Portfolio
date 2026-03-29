@@ -124,7 +124,7 @@ function Sticker({ content, color, delay }: StickerProps) {
 
 export default function FloatingStickers() {
   return (
-    <div className="fixed inset-0 z-[5] pointer-events-none overflow-hidden">
+    <div className="hidden lg:block fixed inset-0 z-[5] pointer-events-none overflow-hidden">
       {STICKERS.map((s) => (
         <div
           key={s.id}

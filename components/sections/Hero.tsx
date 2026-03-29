@@ -36,7 +36,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
   }, []);
 
   return (
-    <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
+    <section className="relative min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 pt-20 overflow-hidden">
       <MatrixRain />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(0,255,65,0.04),transparent)] pointer-events-none z-[1]" />
 
@@ -80,7 +80,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
           animate={showMain ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <h1 className="font-mono text-5xl md:text-8xl font-black mb-4 tracking-tight">
+          <h1 className="font-mono text-3xl sm:text-5xl md:text-8xl font-black mb-4 tracking-tight">
             <span className="text-slate-100">RAHUL</span>{" "}
             <span
               className="text-neon-green"
@@ -90,7 +90,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
             </span>
           </h1>
 
-          <div className="font-mono text-lg md:text-2xl text-cyber-cyan mb-6 tracking-widest min-h-[2rem]">
+          <div className="font-mono text-sm sm:text-lg md:text-2xl text-cyber-cyan mb-6 tracking-widest min-h-[2rem]">
             <TypeAnimation
               sequence={[
                 "Engineer · Embedded Systems",
@@ -117,12 +117,12 @@ export default function Hero({ onLaunchOS }: HeroProps) {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-10 sm:mb-16">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.querySelector("#projects")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 font-mono font-bold text-neon-green border border-neon-green rounded-lg
+              className="px-6 sm:px-8 py-3 font-mono font-bold text-sm sm:text-base text-neon-green border border-neon-green rounded-lg
                          hover:bg-neon-green hover:text-dark-bg transition-all duration-300 tracking-widest
                          hover:shadow-[0_0_30px_#00ff4166]"
             >
@@ -132,7 +132,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               onClick={onLaunchOS}
-              className="px-8 py-3 font-mono font-bold text-neon-amber border border-neon-amber/60 rounded-lg
+              className="px-6 sm:px-8 py-3 font-mono font-bold text-sm sm:text-base text-neon-amber border border-neon-amber/60 rounded-lg
                          hover:bg-neon-amber hover:text-dark-bg transition-all duration-300 tracking-widest
                          hover:shadow-[0_0_30px_#ff950066] flex items-center gap-2 justify-center"
             >
@@ -142,7 +142,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
-              className="px-8 py-3 font-mono font-bold text-cyber-cyan border border-cyber-cyan/60 rounded-lg
+              className="px-6 sm:px-8 py-3 font-mono font-bold text-sm sm:text-base text-cyber-cyan border border-cyber-cyan/60 rounded-lg
                          hover:bg-cyber-cyan hover:text-dark-bg transition-all duration-300 tracking-widest
                          hover:shadow-[0_0_30px_#00d4ff66]"
             >

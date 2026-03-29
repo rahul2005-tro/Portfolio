@@ -32,7 +32,7 @@ const typeConfig = {
 
 export default function Achievements() {
   return (
-    <section id="achievements" className="relative py-28 px-6">
+    <section id="achievements" className="relative py-20 sm:py-28 px-4 sm:px-6">
       {/* Background glows */}
       <div className="absolute left-0 top-1/4 w-80 h-80 bg-neon-gold/3 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute right-0 bottom-1/4 w-80 h-80 bg-cyber-cyan/3 rounded-full blur-3xl pointer-events-none" />

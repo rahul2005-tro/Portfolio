@@ -48,7 +48,7 @@ export default function Contact() {
     "border-neon-green/15 focus:border-neon-green/50 focus:shadow-[0_0_15px_rgba(0,255,65,0.08)]";
 
   return (
-    <section id="contact" className="relative py-28 px-6 overflow-hidden">
+    <section id="contact" className="relative py-20 sm:py-28 px-4 sm:px-6 overflow-hidden">
       <div className="absolute right-0 bottom-0 w-96 h-96 bg-neon-green/3 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute left-0 top-0 w-64 h-64 bg-cyber-cyan/2 rounded-full blur-3xl pointer-events-none" />
 

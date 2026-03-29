@@ -30,7 +30,10 @@ export default function Navbar() {
     setMenuOpen(false);
     setActiveSection(href);
     const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
   };
 
   return (

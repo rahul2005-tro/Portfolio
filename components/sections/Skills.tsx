@@ -11,7 +11,7 @@ const fadeUp = {
 
 export default function Skills() {
   return (
-    <section id="skills" className="relative py-28 px-6">
+    <section id="skills" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute right-0 top-1/4 w-96 h-96 bg-cyber-cyan/3 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">
