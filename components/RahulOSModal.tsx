@@ -8,13 +8,13 @@ import dynamic from "next/dynamic";
 const LinuxEmulator = dynamic(() => import("@/components/LinuxEmulator"), { ssr: false });
 
 /* ──────────────────────────────────────────────
-   CUSTOM RahulOS SIMULATOR – no iframe needed
+   CUSTOM NexusOS SIMULATOR – no iframe needed
    A fully interactive fake OS with a terminal, 
    file browser, and about panel.
 ────────────────────────────────────────────── */
 
 const BOOT_STEPS = [
-  "[ OK ]  Initialising RahulOS v2.0 Kernel",
+  "[ OK ]  Initialising NexusOS v2.0 Kernel",
   "[ OK ]  Loading Hardware Abstraction Layer",
   "[ OK ]  Mounting /dev/embedded ── ESP32 · STM32 · RPi",
   "[ OK ]  Starting AI Inference Engine ── TensorFlow · YOLOv3",
@@ -39,10 +39,10 @@ const TERM_COMMANDS: Record<string, () => string> = {
   neofetch      system summary
   clear         clear terminal`,
   whoami: () => "rahul_g",
-  "uname -a": () => "RahulOS 2.0.0 #1 SMP x86_64 embedded-ai-iot GNU/Linux",
-  neofetch: () => `       ██████    rahul_g@RahulOS
+  "uname -a": () => "NexusOS 2.0.0 #1 SMP x86_64 embedded-ai-iot GNU/Linux",
+  neofetch: () => `       ██████    rahul_g@NexusOS
       ████████   ─────────────────
-     ██  ██  ██  OS: RahulOS v2.0.0
+     ██  ██  ██  OS: NexusOS v2.0.0
     ███████████  Kernel: Embedded-AI-4.19
    ██ ███████ ██ Shell: zsh 5.9
   ████████████████ CPU: ESP32 @ 240MHz
@@ -58,8 +58,8 @@ const TERM_COMMANDS: Record<string, () => string> = {
 // ─── Terminal App ───
 function OSTerminal() {
   const [lines, setLines] = useState<{ text: string; isCmd: boolean }[]>([
-    { text: "RahulOS v2.0 — Type 'help' for commands", isCmd: false },
-    { text: "rahul_g@RahulOS:~$", isCmd: false },
+    { text: "NexusOS v2.0 — Type 'help' for commands", isCmd: false },
+    { text: "rahul_g@NexusOS:~$", isCmd: false },
   ]);
   const [input, setInput] = useState("");
   const [cwd, setCwd] = useState("~/projects");
@@ -77,7 +77,7 @@ function OSTerminal() {
     ];
 
     if (trimmed === "clear") {
-      setLines([{ text: "rahul_g@RahulOS:~$", isCmd: false }]);
+      setLines([{ text: "rahul_g@NexusOS:~$", isCmd: false }]);
       return;
     }
 
@@ -186,7 +186,7 @@ function AboutPanel() {
         {[
           ["User", "Rahul G"],
           ["Role", "Embedded Systems Engineer"],
-          ["OS", "RahulOS v2.0"],
+          ["OS", "NexusOS v2.0"],
           ["Kernel", "AI-Embedded 4.19"],
           ["Projects", "15+ Deployed"],
           ["Achievements", "SIH 2025 National Winner"],
@@ -239,6 +239,8 @@ export default function RahulOSModal({ open, onClose }: Props) {
 
   useEffect(() => {
     if (!open) { setBooting(true); setBootStep(0); setWindows([]); return; }
+    /* Lock body scroll when modal is open */
+    document.body.style.overflow = "hidden";
     BOOT_STEPS.forEach((_, i) => {
       setTimeout(() => {
         setBootStep(i + 1);
@@ -248,6 +250,7 @@ export default function RahulOSModal({ open, onClose }: Props) {
         }, 600);
       }, i * 500);
     });
+    return () => { document.body.style.overflow = ""; };
   }, [open]);
 
   useEffect(() => {
@@ -279,7 +282,7 @@ export default function RahulOSModal({ open, onClose }: Props) {
           <div className="flex items-center justify-between px-5 py-2.5 bg-[#0a0a14] border-b border-neon-green/20 shrink-0">
             <div className="flex items-center gap-3">
               <span className="font-mono text-sm font-bold text-neon-green" style={{ textShadow: "0 0 15px #00ff41aa" }}>
-                RAHUL_OS
+                NEXUS_OS
               </span>
               <span className="font-mono text-[10px] text-slate-600 border border-slate-800 px-1.5 py-0.5 rounded">v2.0</span>
             </div>
@@ -299,7 +302,7 @@ export default function RahulOSModal({ open, onClose }: Props) {
                 className="flex-1 flex flex-col items-center justify-center">
                 <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="mb-12 text-center">
                   <div className="font-mono text-6xl font-black text-neon-green mb-2"
-                    style={{ textShadow: "0 0 60px #00ff41aa" }}>RAHUL_OS</div>
+                    style={{ textShadow: "0 0 60px #00ff41aa" }}>NEXUS_OS</div>
                   <div className="font-mono text-xs text-slate-600 tracking-widest">EMBEDDED · AI · IOT WORKSPACE v2.0</div>
                 </motion.div>
                 <div className="space-y-1.5 text-left w-full max-w-lg px-6 font-mono text-xs">

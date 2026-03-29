@@ -68,7 +68,7 @@ export default function TerminalWidget() {
           }, 300);
           return [
             ">> Launching Dev Environment...",
-            "   Loading RahulOS v2.0...",
+            "   Loading NexusOS v2.0...",
             "   ✓ Terminal, File Explorer, System Monitor ready.",
           ];
         },

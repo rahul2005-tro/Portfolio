@@ -7,7 +7,7 @@ import { FaGithub, FaLinkedin, FaChevronDown, FaRocket } from "react-icons/fa";
 import MatrixRain from "@/components/MatrixRain";
 
 const TERMINAL_STEPS = [
-  "> Initializing RahulOS v2.0...",
+  "> Initializing NexusOS v2.0...",
   "> Loading Modules: [AI] [IoT] [Embedded] [Robotics]",
   "> Mounting Dev Environment...",
   "> ✓ Access Granted. Welcome, Engineer.",
@@ -52,7 +52,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
             <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
             <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
             <div className="w-2.5 h-2.5 rounded-full bg-neon-green/70" />
-            <span className="font-mono text-xs text-slate-500 ml-2">rahul_g@RahulOS:~$</span>
+            <span className="font-mono text-xs text-slate-500 ml-2">rahul_g@NexusOS:~$</span>
           </div>
           <div className="space-y-1 min-h-[80px]">
             {terminalLines.map((line, i) => (
