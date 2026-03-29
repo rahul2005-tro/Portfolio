@@ -37,7 +37,7 @@ export default function Achievements() {
       <div className="absolute left-0 top-1/4 w-80 h-80 bg-neon-gold/3 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute right-0 bottom-1/4 w-80 h-80 bg-cyber-cyan/3 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

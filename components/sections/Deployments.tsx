@@ -125,7 +125,7 @@ export default function Deployments() {
     <section id="deployments" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute left-0 top-1/3 w-80 h-80 bg-neon-green/2 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-7xl mx-auto relative z-10">
+      <div className="max-w-7xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

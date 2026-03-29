@@ -15,7 +15,7 @@ export default function About() {
       {/* Decorative glow */}
       <div className="absolute left-0 top-1/3 w-96 h-96 bg-neon-green/3 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Section Header */}
         <motion.div {...fadeUp} transition={{ duration: 0.6 }} className="mb-16 text-center">
           <p className="section-tag mb-3">[ 01 ]</p>

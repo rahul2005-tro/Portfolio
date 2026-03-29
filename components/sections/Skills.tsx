@@ -14,7 +14,7 @@ export default function Skills() {
     <section id="skills" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute right-0 top-1/4 w-96 h-96 bg-cyber-cyan/3 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Section Header */}
         <motion.div {...fadeUp} transition={{ duration: 0.6 }} className="mb-16 text-center">
           <p className="section-tag mb-3">[ 02 ]</p>

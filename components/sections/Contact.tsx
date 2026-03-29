@@ -52,7 +52,7 @@ export default function Contact() {
       <div className="absolute right-0 bottom-0 w-96 h-96 bg-neon-green/3 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute left-0 top-0 w-64 h-64 bg-cyber-cyan/2 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-5xl mx-auto relative z-10">
+      <div className="max-w-5xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

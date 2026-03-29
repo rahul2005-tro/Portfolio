@@ -8,7 +8,7 @@ export default function Experience() {
     <section id="experience" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute left-0 top-0 w-96 h-96 bg-neon-purple/3 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-4xl mx-auto relative z-10">
+      <div className="max-w-4xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
