@@ -243,7 +243,7 @@ export default function Contact() {
             <a
               href="#"
               download
-              onClick={(e) => { e.preventDefault(); alert("Resume PDF coming soon! Contact me at rahulg2005@gmail.com"); }}
+              onClick={(e) => { e.preventDefault(); alert("Resume PDF coming soon! Contact me at rahul.jet10@gmail.com"); }}
               className="flex items-center justify-center gap-2 py-3 rounded-xl border border-neon-green/25
                          font-mono text-xs text-neon-green hover:bg-neon-green/8 hover:border-neon-green/50
                          transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
