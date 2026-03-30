@@ -30,7 +30,7 @@ export default function Projects() {
   }, []);
 
   return (
-    <section id="projects" className="relative py-28 px-6">
+    <section id="projects" className="relative py-20 sm:py-28 px-4 sm:px-6">
       <div className="absolute left-1/4 bottom-0 w-96 h-96 bg-electric-blue/3 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-6xl mx-auto relative z-10">

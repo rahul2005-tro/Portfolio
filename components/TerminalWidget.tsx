@@ -252,7 +252,7 @@ export default function TerminalWidget() {
             exit={{ opacity: 0, y: 80, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
             className="fixed bottom-24 right-6 z-[60] w-[420px] max-w-[calc(100vw-2rem)] rounded-xl overflow-hidden
-                       border border-neon-green/25 shadow-[0_0_40px_rgba(0,255,65,0.15)]"
+                       border border-neon-green/25 shadow-[0_0_40px_rgba(0,255,65,0.15)] max-h-[80vh]"
             style={{ height: "380px", display: "flex", flexDirection: "column" }}
           >
             {/* Title Bar */}
@@ -303,7 +303,7 @@ export default function TerminalWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKey}
-                className="flex-1 bg-transparent font-mono text-xs text-slate-200 outline-none
+                className="flex-1 bg-transparent font-mono text-[16px] md:text-xs text-slate-200 outline-none
                            placeholder-slate-700 caret-neon-green"
                 placeholder="type a command… (Tab to autocomplete)"
                 autoComplete="off"

@@ -68,11 +68,10 @@ function ProjectWindow({ type, extraRepos = [] }: WindowProps) {
       whileInView={{ opacity: 1, scale: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
       transition={{ duration: 0.5 }}
-      className="rounded-xl overflow-hidden border flex flex-col"
+      className="rounded-xl overflow-hidden border flex flex-col min-h-[auto] sm:min-h-[560px]"
       style={{
         borderColor: `${color}25`,
         background: "rgba(8,8,14,0.95)",
-        minHeight: "560px",
         boxShadow: `0 0 40px ${color}15`,
       }}
     >

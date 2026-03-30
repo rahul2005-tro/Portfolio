@@ -5,7 +5,7 @@ import { featuredProjects } from "@/data/profile";
 
 export default function FeaturedProjects() {
   return (
-    <section id="featured" className="relative py-28 px-6 overflow-hidden">
+    <section id="featured" className="relative py-20 sm:py-28 px-4 sm:px-6 overflow-hidden">
       {/* Background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(0,255,65,0.03),transparent)] pointer-events-none" />
 

@@ -117,7 +117,7 @@ export default function Hero({ onLaunchOS }: HeroProps) {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center mb-10 sm:mb-16">
+          <div className="flex flex-col sm:flex-row sm:flex-wrap flex-nowrap gap-3 sm:gap-4 justify-center mb-10 sm:mb-16 w-full px-4 sm:px-0">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
