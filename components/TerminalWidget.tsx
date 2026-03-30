@@ -235,7 +235,7 @@ export default function TerminalWidget() {
         onClick={() => setOpen((o) => !o)}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 rounded-full bg-card-bg border border-neon-green/40
+        className="fixed bottom-6 right-6 z-[60] w-12 h-12 rounded-full bg-card-bg border border-neon-green/40
                    flex items-center justify-center text-neon-green hover:bg-neon-green/10
                    hover:border-neon-green hover:shadow-[0_0_20px_#00ff4166] transition-all duration-200"
         title="Toggle Terminal (type help)"
@@ -251,7 +251,7 @@ export default function TerminalWidget() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 80, scale: 0.95 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed bottom-24 right-6 z-50 w-[420px] max-w-[calc(100vw-2rem)] rounded-xl overflow-hidden
+            className="fixed bottom-24 right-6 z-[60] w-[420px] max-w-[calc(100vw-2rem)] rounded-xl overflow-hidden
                        border border-neon-green/25 shadow-[0_0_40px_rgba(0,255,65,0.15)]"
             style={{ height: "380px", display: "flex", flexDirection: "column" }}
           >

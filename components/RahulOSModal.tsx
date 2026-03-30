@@ -37,18 +37,19 @@ const TERM_COMMANDS: Record<string, () => string> = {
   whoami        current user info
   uname -a      system information
   neofetch      system summary
-  clear         clear terminal`,
+  clear         clear terminal
+  exit          close the OS and return to main page`,
   whoami: () => "rahul_g",
   "uname -a": () => "NexusOS 2.0.0 #1 SMP x86_64 embedded-ai-iot GNU/Linux",
   neofetch: () => `       ██████    rahul_g@NexusOS
-      ████████   ─────────────────
-     ██  ██  ██  OS: NexusOS v2.0.0
-    ███████████  Kernel: Embedded-AI-4.19
-   ██ ███████ ██ Shell: zsh 5.9
-  ████████████████ CPU: ESP32 @ 240MHz
-                   GPU: Matrix Rain Accelerator
-                   Memory: 1337 MB / 4096 MB
-                   Projects: 15+ deployed`,
+       ████████   ─────────────────
+      ██  ██  ██  OS: NexusOS v2.0.0
+     ███████████  Kernel: Embedded-AI-4.19
+    ██ ███████ ██ Shell: zsh 5.9
+   ████████████████ CPU: ESP32 @ 240MHz
+                    GPU: Matrix Rain Accelerator
+                    Memory: 1337 MB / 4096 MB
+                    Projects: 15+ deployed`,
   pwd: () => "~/projects/hardware",
   ls: () => Object.values(FS).flat().join("\n"),
   date: () => new Date().toUTCString(),
@@ -56,7 +57,7 @@ const TERM_COMMANDS: Record<string, () => string> = {
 };
 
 // ─── Terminal App ───
-function OSTerminal() {
+function OSTerminal({ onExit }: { onExit: () => void }) {
   const [lines, setLines] = useState<{ text: string; isCmd: boolean }[]>([
     { text: "NexusOS v2.0 — Type 'help' for commands", isCmd: false },
     { text: "rahul_g@NexusOS:~$", isCmd: false },
@@ -78,6 +79,10 @@ function OSTerminal() {
 
     if (trimmed === "clear") {
       setLines([{ text: "rahul_g@NexusOS:~$", isCmd: false }]);
+      return;
+    }
+    if (trimmed === "exit") {
+      onExit();
       return;
     }
 
@@ -239,8 +244,19 @@ export default function RahulOSModal({ open, onClose }: Props) {
 
   useEffect(() => {
     if (!open) { setBooting(true); setBootStep(0); setWindows([]); return; }
-    /* Lock body scroll when modal is open */
+    
+    // Push history state to capture Android/Mobile "back" button
+    window.history.pushState({ modalOpen: true }, "", "#nexus-os");
+
+    const onPopState = () => {
+      onClose();
+    };
+    window.addEventListener("popstate", onPopState);
+
+    /* Lock body scroll robustly */
+    document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
+    
     BOOT_STEPS.forEach((_, i) => {
       setTimeout(() => {
         setBootStep(i + 1);
@@ -250,14 +266,27 @@ export default function RahulOSModal({ open, onClose }: Props) {
         }, 600);
       }, i * 500);
     });
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
+    return () => { 
+      window.removeEventListener("popstate", onPopState);
+      document.documentElement.style.overflow = "";
+      document.body.style.overflow = ""; 
+    };
+  }, [open, onClose]);
+
+  const handleClose = () => {
+    // If the hash is still there, navigating back removes it and triggers popstate (which calls onClose)
+    if (window.location.hash === "#nexus-os") {
+      window.history.back();
+    } else {
+      onClose();
+    }
+  };
 
   useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === "Escape" && open) onClose(); };
+    const h = (e: KeyboardEvent) => { if (e.key === "Escape" && open) handleClose(); };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [open, onClose]);
+  }, [open]);
 
   const openApp = (id: AppId) => {
     setActiveApp(id);
@@ -290,8 +319,8 @@ export default function RahulOSModal({ open, onClose }: Props) {
               {new Date().toLocaleDateString("en-IN", { weekday: "short", year: "numeric", month: "short", day: "numeric" })}
               <span className="ml-2 text-neon-green">●</span>
             </div>
-            <button onClick={onClose} className="font-mono text-xs text-slate-500 hover:text-red-400 transition-colors flex items-center gap-1.5">
-              <FaTimes /> ESC to close
+            <button onClick={handleClose} className="font-mono text-xs bg-red-500/10 text-red-400 border border-red-500/20 px-3 py-1.5 rounded hover:bg-red-500/20 transition-colors flex items-center gap-1.5">
+              <FaTimes /> CLOSE OS
             </button>
           </div>
 
@@ -368,7 +397,7 @@ export default function RahulOSModal({ open, onClose }: Props) {
                         </div>
                         {/* Window content */}
                         <div className="flex-1 overflow-hidden">
-                          {win.id === "terminal" && <OSTerminal />}
+                          {win.id === "terminal" && <OSTerminal onExit={handleClose} />}
                           {win.id === "files"    && <FileBrowser />}
                           {win.id === "about"    && <AboutPanel />}
                           {win.id === "linux"    && <LinuxEmulator />}
