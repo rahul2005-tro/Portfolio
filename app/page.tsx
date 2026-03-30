@@ -76,10 +76,11 @@ export default function HomePage() {
         </ScrollReveal>
 
         <Footer />
-
-        <TerminalWidget />
-        <RahulOSModal open={osOpen} onClose={() => setOsOpen(false)} />
       </main>
+
+      {/* Render outside <main> so they're outside opacity stacking context */}
+      <TerminalWidget />
+      <RahulOSModal open={osOpen} onClose={() => setOsOpen(false)} />
     </>
   );
 }

@@ -274,11 +274,11 @@ export default function RahulOSModal({ open, onClose }: Props) {
   }, [open, onClose]);
 
   const handleClose = () => {
-    // If the hash is still there, navigating back removes it and triggers popstate (which calls onClose)
-    if (window.location.hash === "#nexus-os") {
+    onClose();
+    // If we pushed state, let's silently go back in history to clean up the stack
+    // without triggering another UI change since we already called onClose()
+    if (typeof window !== "undefined" && window.location.hash === "#nexus-os") {
       window.history.back();
-    } else {
-      onClose();
     }
   };
 
