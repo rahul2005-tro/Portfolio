@@ -80,15 +80,8 @@ const BOOT_LOG = [
 
 /* ─── MAIN LOADING SCREEN ─── */
 export default function LoadingScreen({ onComplete }: { onComplete: () => void }) {
-  // Check sessionStorage: if we already booted this session, skip entirely
-  const [shouldShow] = useState(() => {
-    if (typeof window === "undefined") return true;
-    return !sessionStorage.getItem("rahulos_booted");
-  });
-
-  const [phase, setPhase] = useState<"rain" | "boot" | "reveal" | "done">(
-    shouldShow ? "rain" : "done"
-  );
+  const [shouldShow, setShouldShow] = useState(true);
+  const [phase, setPhase] = useState<"rain" | "boot" | "reveal" | "done">("rain");
   const [logLines, setLogLines] = useState<string[]>([]);
   const [progress, setProgress] = useState(0);
   const [skipHint, setSkipHint] = useState(false);
@@ -107,17 +100,10 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
     onComplete();
   }, [onComplete]);
 
-  // If already booted this session, fire onComplete immediately
-  useEffect(() => {
-    if (!shouldShow) {
-      doComplete();
-    }
-  }, [shouldShow, doComplete]);
-
   // Skip on click or key
   const skipNow = useCallback(() => {
-    doComplete();
-  }, [doComplete]);
+    if (shouldShow) doComplete();
+  }, [doComplete, shouldShow]);
 
   useEffect(() => {
     if (!shouldShow) return;
@@ -128,7 +114,11 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
 
   // Phase sequencing — auto-runs on mount, plays exactly once
   useEffect(() => {
-    if (!shouldShow) return;
+    if (sessionStorage.getItem("rahulos_booted")) {
+      setShouldShow(false);
+      doComplete();
+      return;
+    }
 
     setTimestamp(new Date().toISOString().slice(0, 19).replace("T", " "));
 
@@ -153,8 +143,7 @@ export default function LoadingScreen({ onComplete }: { onComplete: () => void }
       clearTimeout(t1);
       clearInterval(lineInterval);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [doComplete]);
 
   if (phase === "done") return null;
 
