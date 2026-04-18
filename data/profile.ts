@@ -13,7 +13,7 @@ export const profile = {
   tagline: "Building the intersection of hardware and intelligence.",
   about: `Mechanical Engineering student with a deep passion for embedded systems, aerodynamics, artificial intelligence, and the Internet of Things. I thrive at the intersection of hardware and software—designing systems that sense, process, and respond to the real world.
 
-From acoustic rail monitoring using AI to autonomous drone systems and smart IoT dashboards, I build solutions that bridge the physical and digital. My engineering philosophy: real-world impact through elegant, efficient systems.`,
+From building Rasavijanana (an award-winning AI Electronic Tongue) to autonomous drone systems and smart IoT dashboards, I build solutions that bridge the physical and digital. My engineering philosophy: real-world impact through elegant, efficient systems.`,
   location: "India",
   github: "https://github.com/rahul2005-tro",
   linkedin: "https://www.linkedin.com/in/rahul-g-840425239/",
@@ -305,14 +305,7 @@ export const timelineItems: TimelineItem[] = [
       "Developing a thrust vector control system for autonomous drone stabilization with PID loops and custom flight firmware.",
     tags: ["Embedded C", "Control Systems", "Robotics", "TVC"],
   },
-  {
-    period: "2024",
-    title: "AI Rail Defect Detection System",
-    organization: "Academic Research Initiative",
-    description:
-      "Designed and trained an ML model for acoustic-based rail anomaly detection with high accuracy.",
-    tags: ["Python", "ML", "Signal Processing", "AI"],
-  },
+
   {
     period: "2023 — 2024",
     title: "IoT Motor Protection Dashboard",
