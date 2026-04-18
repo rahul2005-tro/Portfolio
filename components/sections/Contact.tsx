@@ -35,11 +35,11 @@ export default function Contact() {
       await emailjs.sendForm(EJS_SERVICE, EJS_TEMPLATE, formRef.current!, EJS_PUBLIC);
       setStatus("sent");
       setForm({ name: "", email: "", message: "" });
-    } catch {
+      setTimeout(() => setStatus("idle"), 5000);
+    } catch (err) {
+      console.error("EmailJS Error:", err);
       setStatus("error");
     }
-
-    setTimeout(() => setStatus("idle"), 5000);
   };
 
   const inputClass =
@@ -136,8 +136,22 @@ export default function Contact() {
 
                 {/* Status banners */}
                 {status === "error" && (
-                  <div className="flex items-center gap-2 text-red-400 font-mono text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2">
-                    <FaExclamationCircle /> Failed to send. Check your EmailJS config or use the mail fallback.
+                  <div className="flex flex-col gap-3 text-red-400 font-mono text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
+                    <div className="flex items-start gap-2">
+                      <FaExclamationCircle className="mt-0.5 shrink-0" /> 
+                      <p>Failed to send. Check console for EmailJS error or use the mail fallback below.</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const subject = `Message from ${form.name || 'Website Visitor'}`;
+                        const body = `${form.message}\n\nFrom: ${form.name} (${form.email})`;
+                        window.location.href = `mailto:rahul.jet10@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                      }}
+                      className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-300 rounded border border-red-500/30 transition-colors w-full flex items-center justify-center gap-2"
+                    >
+                      <FaEnvelope /> Use Mail Fallback
+                    </button>
                   </div>
                 )}
 
