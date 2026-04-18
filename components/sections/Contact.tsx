@@ -36,9 +36,11 @@ export default function Contact() {
       setStatus("sent");
       setForm({ name: "", email: "", message: "" });
       setTimeout(() => setStatus("idle"), 5000);
-    } catch (err) {
+    } catch (err: any) {
       console.error("EmailJS Error:", err);
-      setStatus("error");
+      // EmailJS errors usually have a 'text' property containing the explanation
+      const errorMsg = err?.text || err?.message || "Unknown error";
+      setStatus(`error: ${errorMsg}` as any);
     }
   };
 
@@ -135,11 +137,14 @@ export default function Contact() {
                 </div>
 
                 {/* Status banners */}
-                {status === "error" && (
+                {status.startsWith("error") && (
                   <div className="flex flex-col gap-3 text-red-400 font-mono text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
                     <div className="flex items-start gap-2">
                       <FaExclamationCircle className="mt-0.5 shrink-0" /> 
-                      <p>Failed to send. Check console for EmailJS error or use the mail fallback below.</p>
+                      <p>
+                        Failed to send: <strong>{status.replace("error: ", "")}</strong><br/>
+                        Check your EmailJS config or use the mail fallback below.
+                      </p>
                     </div>
                     <button
                       type="button"
