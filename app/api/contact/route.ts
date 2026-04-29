@@ -60,6 +60,7 @@ export async function POST(request: Request) {
         service_id: EJS_SERVICE,
         template_id: EJS_TEMPLATE,
         user_id: EJS_PUBLIC,
+        accessToken: process.env.EMAILJS_PRIVATE_KEY || "nKJ_B44lyAWO2nlFTaDXI",
         template_params: {
           from_name: name,
           from_email: email,
