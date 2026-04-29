@@ -7,6 +7,8 @@ import ScrollProgress from "@/components/ScrollProgress";
 import KonamiEaster from "@/components/KonamiEaster";
 import FloatingStickers from "@/components/FloatingStickers";
 
+const siteUrl = "https://rahul-portfolio-vercel.app";
+
 export const metadata: Metadata = {
   title: "Rahul G — Engineer | Embedded Systems | AI | IoT",
   description:
@@ -15,10 +17,29 @@ export const metadata: Metadata = {
     "Rahul G", "Embedded Systems", "IoT", "AI", "Robotics", "Portfolio",
     "ESP32", "Python", "SIH 2025", "Smart India Hackathon", "Freelance",
   ],
+  metadataBase: new URL(siteUrl),
   openGraph: {
     title: "Rahul G — Engineer | Embedded Systems | AI | IoT",
-    description: "OS-level futuristic portfolio. SIH 2025 National Winner.",
+    description: "OS-level futuristic portfolio. SIH 2025 National Winner. Building the intersection of hardware and intelligence.",
     type: "website",
+    url: siteUrl,
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Rahul G — Engineer Portfolio",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Rahul G — Engineer | Embedded Systems | AI | IoT",
+    description: "OS-level futuristic portfolio. SIH 2025 National Winner.",
+    images: ["/og-image.png"],
+  },
+  icons: {
+    icon: "/favicon.svg",
   },
   verification: {
     other: {
@@ -31,10 +52,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark">
       <head>
+        <meta name="theme-color" content="#050508" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Inter:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
       </head>
       <body className="bg-dark-bg text-slate-200 antialiased">
+        {/* Skip to main content — accessibility */}
+        <a
+          href="#about"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-neon-green focus:text-dark-bg focus:px-4 focus:py-2 focus:rounded-lg focus:font-mono focus:text-sm"
+        >
+          Skip to main content
+        </a>
         <ScrollProgress />
         <CircuitBackground />
         <CursorGlow />

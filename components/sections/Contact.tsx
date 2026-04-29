@@ -5,42 +5,46 @@ import { motion } from "framer-motion";
 import {
   FaGithub, FaLinkedin, FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationCircle,
 } from "react-icons/fa";
-import emailjs from "@emailjs/browser";
-
-/* ─────────────────────────────────────────
-  EmailJS Setup:
-  1. Create a free account at emailjs.com
-  2. Add a service (Gmail / Outlook)
-  3. Create an email template with variables:
-     {{from_name}}, {{from_email}}, {{message}}
-  4. Replace the three constants below with your
-     Service ID, Template ID, and Public Key
-───────────────────────────────────────── */
-const EJS_SERVICE  = "service_7rk2pdp";    // ✓ set
-const EJS_TEMPLATE = "template_o83rjik";    // ✓ set
-const EJS_PUBLIC   = "Nbk0MJXla9KiXjHh3"; // ✓ set
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [honeypot, setHoneypot] = useState("");
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg("");
 
     try {
-      await emailjs.sendForm(EJS_SERVICE, EJS_TEMPLATE, formRef.current!, EJS_PUBLIC);
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          message: form.message,
+          _honeypot: honeypot,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to send message.");
+      }
+
       setStatus("sent");
       setForm({ name: "", email: "", message: "" });
       setTimeout(() => setStatus("idle"), 5000);
     } catch (err: any) {
-      console.error("EmailJS Error:", err);
-      // EmailJS errors usually have a 'text' property containing the explanation
-      const errorMsg = err?.text || err?.message || "Unknown error";
-      setStatus(`error: ${errorMsg}` as any);
+      console.error("Contact error:", err);
+      setErrorMsg(err?.message || "Unknown error");
+      setStatus("error");
     }
   };
 
@@ -63,7 +67,7 @@ export default function Contact() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <p className="font-mono text-xs text-neon-green/60 tracking-widest mb-3">[ 07 ]</p>
+          <p className="font-mono text-xs text-neon-green/60 tracking-widest mb-3">[ 08 ]</p>
           <h2 className="font-mono text-3xl md:text-4xl font-bold text-slate-100">
             <span className="text-neon-green/50">// </span>Contact
             <span className="text-neon-green">_</span>Me
@@ -90,6 +94,17 @@ export default function Contact() {
               </p>
 
               <form ref={formRef} onSubmit={handleSubmit} className="flex flex-col gap-4">
+                {/* Honeypot — hidden from humans, catches bots */}
+                <input
+                  type="text"
+                  name="_honeypot"
+                  value={honeypot}
+                  onChange={(e) => setHoneypot(e.target.value)}
+                  className="hidden"
+                  tabIndex={-1}
+                  autoComplete="off"
+                />
+
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="font-mono text-[10px] text-slate-500 mb-1.5 block tracking-widest">
@@ -137,13 +152,13 @@ export default function Contact() {
                 </div>
 
                 {/* Status banners */}
-                {status.startsWith("error") && (
+                {status === "error" && (
                   <div className="flex flex-col gap-3 text-red-400 font-mono text-xs bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3">
                     <div className="flex items-start gap-2">
                       <FaExclamationCircle className="mt-0.5 shrink-0" /> 
                       <p>
-                        Failed to send: <strong>{status.replace("error: ", "")}</strong><br/>
-                        Check your EmailJS config or use the mail fallback below.
+                        Failed to send: <strong>{errorMsg}</strong><br/>
+                        You can use the mail fallback below instead.
                       </p>
                     </div>
                     <button
@@ -260,14 +275,12 @@ export default function Contact() {
 
             {/* Resume Download */}
             <a
-              href="#"
-              download
-              onClick={(e) => { e.preventDefault(); alert("Resume PDF coming soon! Contact me at rahul.jet10@gmail.com"); }}
+              href="mailto:rahul.jet10@gmail.com?subject=Resume%20Request&body=Hi%20Rahul%2C%20I%20would%20like%20to%20request%20your%20resume."
               className="flex items-center justify-center gap-2 py-3 rounded-xl border border-neon-green/25
                          font-mono text-xs text-neon-green hover:bg-neon-green/8 hover:border-neon-green/50
                          transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.1)]"
             >
-              ↓ Download Resume
+              ✉ Request Resume
             </a>
           </motion.div>
         </div>

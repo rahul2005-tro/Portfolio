@@ -134,7 +134,7 @@ export default function Deployments() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <p className="font-mono text-xs text-neon-green/60 tracking-widest mb-3">[ 04 ]</p>
+          <p className="font-mono text-xs text-neon-green/60 tracking-widest mb-3">[ 05 ]</p>
           <h2 className="font-mono text-3xl md:text-4xl font-bold text-slate-100">
             <span className="text-neon-green/50">// </span>Deployed
             <span className="text-neon-green">_</span>Projects

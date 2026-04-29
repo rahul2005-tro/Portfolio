@@ -46,7 +46,7 @@ export default function Achievements() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <p className="section-tag mb-3">[ 05 ]</p>
+          <p className="section-tag mb-3">[ 06 ]</p>
           <h2 className="font-mono text-3xl md:text-4xl font-bold text-slate-100">
             <span className="text-neon-green/50">// </span>Achievements
             <span className="text-neon-gold">_</span>Log

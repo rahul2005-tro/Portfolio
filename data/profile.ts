@@ -17,7 +17,7 @@ From building Rasavijanana (an award-winning AI Electronic Tongue) to autonomous
   location: "India",
   github: "https://github.com/rahul2005-tro",
   linkedin: "https://www.linkedin.com/in/rahul-g-840425239/",
-  email: "rahul@example.com",
+  email: "rahul.jet10@gmail.com",
   stats: [
     { label: "Projects", value: "15+" },
     { label: "Technologies", value: "25+" },
