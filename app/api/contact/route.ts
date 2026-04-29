@@ -51,7 +51,7 @@ export async function POST(request: Request) {
     // Send via EmailJS REST API (server-side — keys not exposed to client)
     const EJS_SERVICE = process.env.EMAILJS_SERVICE_ID || "service_1v3431t";
     const EJS_TEMPLATE = process.env.EMAILJS_TEMPLATE_ID || "template_o83rjik";
-    const EJS_PUBLIC = process.env.EMAILJS_PUBLIC_KEY || "Nbk0MJXla9KiXjHh3";
+    const EJS_PUBLIC = process.env.EMAILJS_PUBLIC_KEY || "vwaghtAEMKrZjdnZJ";
 
     const ejsRes = await fetch("https://api.emailjs.com/api/v1.0/email/send", {
       method: "POST",
