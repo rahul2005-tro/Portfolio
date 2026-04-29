@@ -9,7 +9,7 @@ export default function FeaturedProjects() {
       {/* Background glow */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_50%,rgba(0,255,65,0.03),transparent)] pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto relative z-10 glass-section p-6 sm:p-10">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}

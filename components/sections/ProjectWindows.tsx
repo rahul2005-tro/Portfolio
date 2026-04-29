@@ -83,7 +83,7 @@ function ProjectWindow({ type, extraRepos = [] }: WindowProps) {
         <div className="flex items-center gap-1.5">
           <div className="w-3 h-3 rounded-full bg-red-500/70" />
           <div className="w-3 h-3 rounded-full bg-yellow-500/70" />
-          <div className="w-3 h-3 rounded-full rounded-full" style={{ background: color, opacity: 0.7 }} />
+          <div className="w-3 h-3 rounded-full" style={{ background: color, opacity: 0.7 }} />
         </div>
         <div className="flex items-center gap-2 font-mono text-xs" style={{ color }}>
           {isHW ? <FaMicrochip className="text-sm" /> : <FaCode className="text-sm" />}

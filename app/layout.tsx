@@ -6,6 +6,7 @@ import CircuitBackground from "@/components/CircuitBackground";
 import ScrollProgress from "@/components/ScrollProgress";
 import KonamiEaster from "@/components/KonamiEaster";
 import FloatingStickers from "@/components/FloatingStickers";
+import BackToTop from "@/components/BackToTop";
 
 const siteUrl = "https://rahul-portfolio-vercel.app";
 
@@ -61,6 +62,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="bg-dark-bg text-slate-200 antialiased">
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Person",
+              name: "Rahul G",
+              url: siteUrl,
+              jobTitle: "Engineer — Embedded Systems, AI & IoT",
+              description: "Mechanical Engineering student specializing in Embedded Systems, AI, IoT, and Robotics. SIH 2025 National Winner.",
+              sameAs: [
+                "https://github.com/rahul2005-tro",
+                "https://www.linkedin.com/in/rahul-g-840425239/",
+              ],
+              knowsAbout: ["Embedded Systems", "IoT", "AI", "Machine Learning", "Robotics", "ESP32", "Python"],
+            }),
+          }}
+        />
         {/* Skip to main content — accessibility */}
         <a
           href="#about"
@@ -74,6 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Navbar />
         <KonamiEaster />
         <FloatingStickers />
+        <BackToTop />
         {children}
       </body>
     </html>
