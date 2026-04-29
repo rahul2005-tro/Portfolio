@@ -73,7 +73,7 @@ export async function POST(request: Request) {
       const errText = await ejsRes.text();
       console.error("EmailJS server error:", ejsRes.status, errText);
       return NextResponse.json(
-        { error: `EmailJS error (${ejsRes.status}): ${errText}` },
+        { error: "Failed to send email. Please use the mail fallback." },
         { status: 502 }
       );
     }
