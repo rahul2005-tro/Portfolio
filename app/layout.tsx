@@ -8,7 +8,7 @@ import KonamiEaster from "@/components/KonamiEaster";
 import FloatingStickers from "@/components/FloatingStickers";
 import BackToTop from "@/components/BackToTop";
 
-const siteUrl = "https://rahul-portfolio-vercel.app";
+const siteUrl = "https://rahulg-05portfolio.vercel.app";
 
 export const metadata: Metadata = {
   title: "Rahul G — Engineer | Embedded Systems | AI | IoT",
