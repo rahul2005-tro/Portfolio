@@ -9,6 +9,7 @@ import FloatingStickers from "@/components/FloatingStickers";
 import BackToTop from "@/components/BackToTop";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import VisitTracker from "@/components/VisitTracker";
 
 const siteUrl = "https://rahulg-05portfolio.vercel.app";
 
@@ -97,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <KonamiEaster />
         <FloatingStickers />
         <BackToTop />
+        <VisitTracker />
         {children}
         {/* Vercel Analytics — tracks all page views automatically */}
         <Analytics />

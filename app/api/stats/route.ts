@@ -1,109 +1,104 @@
 import { NextResponse } from "next/server";
-import { kv } from "@vercel/kv";
+import { getDb, ensureSchema } from "@/lib/db";
 
-const memoryStore: Record<string, number | string> = {};
-
-async function safeKvGet<T>(key: string, fallback: T): Promise<T> {
-  try {
-    const v = await kv.get<T>(key);
-    return v ?? fallback;
-  } catch {
-    return (memoryStore[key] as T) ?? fallback;
-  }
-}
-
-async function safeHGetAll(hash: string): Promise<Record<string, number>> {
-  try {
-    const result = await kv.hgetall<Record<string, number>>(hash);
-    return result ?? {};
-  } catch {
-    return {};
-  }
-}
-
-async function safeKvKeys(pattern: string): Promise<string[]> {
-  try {
-    return await kv.keys(pattern);
-  } catch {
-    return [];
-  }
-}
+const ADMIN_KEY = process.env.ADMIN_SECRET_KEY || "rahul-admin-2025";
 
 export async function GET(request: Request) {
-  // Protect with a secret key
   const { searchParams } = new URL(request.url);
-  const secret = searchParams.get("key");
-  const adminKey = process.env.ADMIN_SECRET_KEY || "rahul-admin-2025";
-
-  if (secret !== adminKey) {
+  if (searchParams.get("key") !== ADMIN_KEY) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const total = await safeKvGet<number>("visits:total", 0);
-    const uniqueTotal = await safeKvGet<number>("visits:unique_total", 0);
+    await ensureSchema();
+    const sql = getDb();
 
-    // Get last 30 days of data
-    const dailyData: Array<{ date: string; visits: number; unique: number }> = [];
-    const today = new Date();
+    // ── Total & unique all-time ──────────────────────────────────────
+    const [totals] = await sql`
+      SELECT
+        COUNT(*)                                      AS total,
+        COUNT(DISTINCT ip_hash)                       AS unique_total
+      FROM visits
+    `;
 
+    // ── Today ────────────────────────────────────────────────────────
+    const [todays] = await sql`
+      SELECT
+        COUNT(*)                    AS today_visits,
+        COUNT(DISTINCT ip_hash)     AS today_unique
+      FROM visits
+      WHERE visited_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 day'
+        AND DATE(visited_at AT TIME ZONE 'UTC') = CURRENT_DATE
+    `;
+
+    // ── Last 7 days ──────────────────────────────────────────────────
+    const [week] = await sql`
+      SELECT COUNT(*) AS week_visits
+      FROM visits
+      WHERE visited_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '7 days'
+    `;
+
+    // ── Daily breakdown — last 30 days ───────────────────────────────
+    const dailyRows = await sql`
+      SELECT
+        DATE(visited_at AT TIME ZONE 'UTC')::TEXT   AS date,
+        COUNT(*)                                     AS visits,
+        COUNT(DISTINCT ip_hash)                      AS unique
+      FROM visits
+      WHERE visited_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '30 days'
+      GROUP BY 1
+      ORDER BY 1 ASC
+    `;
+
+    // Fill in missing days with 0s
+    const dailyMap = new Map<string, { visits: number; unique: number }>();
+    for (const row of dailyRows) {
+      dailyMap.set(row.date, {
+        visits: Number(row.visits),
+        unique: Number(row.unique),
+      });
+    }
+    const dailyData: { date: string; visits: number; unique: number }[] = [];
     for (let i = 29; i >= 0; i--) {
-      const d = new Date(today);
+      const d = new Date();
       d.setDate(d.getDate() - i);
       const dateStr = d.toISOString().slice(0, 10);
-
-      const visits = await safeKvGet<number>(`visits:day:${dateStr}`, 0);
-      const unique = await safeKvGet<number>(`visits:unique_day:${dateStr}`, 0);
-      dailyData.push({ date: dateStr, visits, unique });
+      dailyData.push({
+        date: dateStr,
+        ...(dailyMap.get(dateStr) ?? { visits: 0, unique: 0 }),
+      });
     }
 
-    // Get page-level breakdown
-    const pageKeys = await safeKvKeys("visits:page:*");
-    const pages: Array<{ page: string; count: number }> = [];
-    for (const key of pageKeys.slice(0, 20)) {
-      const count = await safeKvGet<number>(key, 0);
-      pages.push({ page: key.replace("visits:page:", "/"), count });
-    }
-    pages.sort((a, b) => b.count - a.count);
+    // ── Top pages ────────────────────────────────────────────────────
+    const pageRows = await sql`
+      SELECT page, COUNT(*) AS count
+      FROM visits
+      GROUP BY page
+      ORDER BY count DESC
+      LIMIT 10
+    `;
 
-    // Referrers
-    const refKeys = await safeKvKeys("visits:ref:*");
-    const referrers: Array<{ domain: string; count: number }> = [];
-    for (const key of refKeys.slice(0, 10)) {
-      const count = await safeKvGet<number>(key, 0);
-      referrers.push({ domain: key.replace("visits:ref:", ""), count });
-    }
-    referrers.sort((a, b) => b.count - a.count);
-
-    // Today's stats
-    const todayStr = today.toISOString().slice(0, 10);
-    const todayVisits = await safeKvGet<number>(`visits:day:${todayStr}`, 0);
-    const todayUnique = await safeKvGet<number>(`visits:unique_day:${todayStr}`, 0);
-
-    // This week
-    const weekVisits = dailyData.slice(-7).reduce((sum, d) => sum + d.visits, 0);
-
-    let source: "db" | "memory" = "db";
-    if (total === 0 && uniqueTotal === 0) {
-      // Check if KV is actually configured
-      try {
-        await kv.get("visits:total");
-      } catch {
-        source = "memory";
-      }
-    }
+    // ── Referrers ────────────────────────────────────────────────────
+    const refRows = await sql`
+      SELECT referrer AS domain, COUNT(*) AS count
+      FROM visits
+      WHERE referrer IS NOT NULL AND referrer != ''
+      GROUP BY referrer
+      ORDER BY count DESC
+      LIMIT 10
+    `;
 
     return NextResponse.json({
-      total,
-      uniqueTotal,
-      todayVisits,
-      todayUnique,
-      weekVisits,
+      total: Number(totals.total),
+      uniqueTotal: Number(totals.unique_total),
+      todayVisits: Number(todays.today_visits),
+      todayUnique: Number(todays.today_unique),
+      weekVisits: Number(week.week_visits),
       dailyData,
-      pages,
-      referrers,
+      pages: pageRows.map((r) => ({ page: r.page, count: Number(r.count) })),
+      referrers: refRows.map((r) => ({ domain: r.domain, count: Number(r.count) })),
       generatedAt: new Date().toISOString(),
-      source,
+      source: "db",
     });
   } catch (err) {
     console.error("Stats API error:", err);
