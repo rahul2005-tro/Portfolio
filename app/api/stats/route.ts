@@ -83,6 +83,16 @@ export async function GET(request: Request) {
     // This week
     const weekVisits = dailyData.slice(-7).reduce((sum, d) => sum + d.visits, 0);
 
+    let source: "db" | "memory" = "db";
+    if (total === 0 && uniqueTotal === 0) {
+      // Check if KV is actually configured
+      try {
+        await kv.get("visits:total");
+      } catch {
+        source = "memory";
+      }
+    }
+
     return NextResponse.json({
       total,
       uniqueTotal,
@@ -93,6 +103,7 @@ export async function GET(request: Request) {
       pages,
       referrers,
       generatedAt: new Date().toISOString(),
+      source,
     });
   } catch (err) {
     console.error("Stats API error:", err);

@@ -19,6 +19,7 @@ interface StatsData {
   pages: { page: string; count: number }[];
   referrers: { domain: string; count: number }[];
   generatedAt: string;
+  source: "db" | "memory";
 }
 
 function StatCard({
@@ -178,7 +179,7 @@ export default function AdminDashboard() {
       setLastRefresh(new Date());
       setError(null);
     } catch {
-      setError("Failed to load stats. Make sure Vercel KV is connected.");
+      setError("Failed to load stats. Check if the API is deployed correctly.");
     } finally {
       setLoading(false);
     }
@@ -307,8 +308,23 @@ export default function AdminDashboard() {
           >
             PRIVATE
           </span>
+          {stats.source === "memory" && (
+            <span
+              style={{
+                background: "#ff950015",
+                border: "1px solid #ff950033",
+                borderRadius: "999px",
+                padding: "2px 10px",
+                fontSize: "11px",
+                color: "#ff9500",
+                fontFamily: "JetBrains Mono, monospace",
+              }}
+            >
+              ⚡ IN-MEMORY (resets on redeploy)
+            </span>
+          )}
         </div>
-        <div style={{ display: "flex", align: "center", gap: "12px", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           {lastRefresh && (
             <span style={{ fontSize: "12px", color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>
               Updated {lastRefresh.toLocaleTimeString()}
@@ -329,10 +345,50 @@ export default function AdminDashboard() {
           >
             ↻ Refresh
           </button>
+          {/* Vercel Analytics deep-link */}
+          <a
+            href="https://vercel.com/rahul2005-tro/rahul-portfolio/analytics"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              background: "#00ff4120",
+              border: "1px solid #00ff4144",
+              borderRadius: "8px",
+              color: "#00ff41",
+              padding: "6px 14px",
+              fontSize: "12px",
+              cursor: "pointer",
+              fontFamily: "JetBrains Mono, monospace",
+              textDecoration: "none",
+            }}
+          >
+            ↗ Vercel Dashboard
+          </a>
         </div>
       </div>
 
       <div style={{ padding: "32px", maxWidth: "1200px", margin: "0 auto" }}>
+
+        {/* Notice banner if using memory */}
+        {stats.source === "memory" && (
+          <div style={{
+            background: "rgba(255,149,0,0.08)",
+            border: "1px solid #ff950033",
+            borderRadius: "12px",
+            padding: "16px 20px",
+            marginBottom: "24px",
+            fontFamily: "JetBrains Mono, monospace",
+            fontSize: "13px",
+            color: "#ff9500",
+          }}>
+            ⚡ <strong>Running without a database</strong> — visit counts reset on each redeploy.
+            For persistent tracking, connect a <strong>Neon</strong> database in your Vercel project Storage tab,
+            then add <code style={{ background: "#ff950020", padding: "1px 6px", borderRadius: "4px" }}>DATABASE_URL</code> to your environment variables.
+            <br /><br />
+            Alternatively, use the <strong>↗ Vercel Dashboard</strong> button above — Vercel Analytics is already tracking all your visitors for free.
+          </div>
+        )}
+
         {/* Top stat cards */}
         <div
           style={{
@@ -341,87 +397,23 @@ export default function AdminDashboard() {
             marginBottom: "32px",
           }}
         >
-          <StatCard
-            label="Total Visits"
-            value={stats.total}
-            subtitle="All time"
-            color="#00ff41"
-            icon="👁️"
-          />
-          <StatCard
-            label="Unique Visitors"
-            value={stats.uniqueTotal}
-            subtitle="All time"
-            color="#00d4ff"
-            icon="👤"
-          />
-          <StatCard
-            label="Today"
-            value={stats.todayVisits}
-            subtitle={`${stats.todayUnique} unique today`}
-            color="#ff9500"
-            icon="📅"
-          />
-          <StatCard
-            label="This Week"
-            value={stats.weekVisits}
-            subtitle="Last 7 days"
-            color="#9f00ff"
-            icon="📊"
-          />
+          <StatCard label="Total Visits" value={stats.total} subtitle="All time" color="#00ff41" icon="👁️" />
+          <StatCard label="Unique Visitors" value={stats.uniqueTotal} subtitle="All time" color="#00d4ff" icon="👤" />
+          <StatCard label="Today" value={stats.todayVisits} subtitle={`${stats.todayUnique} unique today`} color="#ff9500" icon="📅" />
+          <StatCard label="This Week" value={stats.weekVisits} subtitle="Last 7 days" color="#9f00ff" icon="📊" />
         </div>
 
-        {/* Chart + breakdown row */}
-        <div
-          style={{
-            ...gridStyle,
-            gridTemplateColumns: "1fr 1fr",
-            marginBottom: "32px",
-          }}
-        >
-          {/* 7-day chart */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid #1e293b",
-              borderRadius: "16px",
-              padding: "24px",
-            }}
-          >
-            <h2
-              style={{
-                margin: "0 0 20px",
-                fontSize: "14px",
-                color: "#94a3b8",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
+        {/* Charts row */}
+        <div style={{ ...gridStyle, gridTemplateColumns: "1fr 1fr", marginBottom: "32px" }}>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "16px", padding: "24px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "14px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
               📈 Last 7 Days
             </h2>
             <MiniChart data={stats.dailyData} />
           </div>
 
-          {/* 30-day sparkline */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid #1e293b",
-              borderRadius: "16px",
-              padding: "24px",
-            }}
-          >
-            <h2
-              style={{
-                margin: "0 0 20px",
-                fontSize: "14px",
-                color: "#94a3b8",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "16px", padding: "24px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "14px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
               📅 30-Day Overview
             </h2>
             <div style={{ display: "flex", alignItems: "flex-end", gap: "3px", height: "80px" }}>
@@ -430,155 +422,45 @@ export default function AdminDashboard() {
                 const h = Math.max((d.visits / maxVal) * 80, 2);
                 const isToday = d.date === new Date().toISOString().slice(0, 10);
                 return (
-                  <div
-                    key={d.date}
-                    title={`${d.date}: ${d.visits}`}
-                    style={{
-                      flex: 1,
-                      height: `${h}px`,
-                      background: isToday ? "#00ff41" : "#00d4ff44",
-                      borderRadius: "2px 2px 0 0",
-                      cursor: "help",
-                    }}
-                  />
+                  <div key={d.date} title={`${d.date}: ${d.visits}`} style={{ flex: 1, height: `${h}px`, background: isToday ? "#00ff41" : "#00d4ff44", borderRadius: "2px 2px 0 0", cursor: "help" }} />
                 );
               })}
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-              <span style={{ fontSize: "11px", color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>
-                {stats.dailyData[0]?.date}
-              </span>
-              <span style={{ fontSize: "11px", color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>
-                {stats.dailyData[stats.dailyData.length - 1]?.date}
-              </span>
+              <span style={{ fontSize: "11px", color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>{stats.dailyData[0]?.date}</span>
+              <span style={{ fontSize: "11px", color: "#475569", fontFamily: "JetBrains Mono, monospace" }}>{stats.dailyData[stats.dailyData.length - 1]?.date}</span>
             </div>
           </div>
         </div>
 
         {/* Pages + Referrers */}
-        <div
-          style={{
-            ...gridStyle,
-            gridTemplateColumns: "1fr 1fr",
-            marginBottom: "32px",
-          }}
-        >
-          {/* Top Pages */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid #1e293b",
-              borderRadius: "16px",
-              padding: "24px",
-            }}
-          >
-            <h2
-              style={{
-                margin: "0 0 20px",
-                fontSize: "14px",
-                color: "#94a3b8",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
-              📄 Top Pages
-            </h2>
-            {stats.pages.length === 0 ? (
-              <p style={{ color: "#475569", fontSize: "13px", fontFamily: "JetBrains Mono, monospace" }}>
-                No page data yet
-              </p>
-            ) : (
-              stats.pages.slice(0, 8).map((p) => (
-                <BarRow
-                  key={p.page}
-                  label={p.page}
-                  count={p.count}
-                  max={maxPageCount}
-                  color="#00ff41"
-                />
-              ))
-            )}
+        <div style={{ ...gridStyle, gridTemplateColumns: "1fr 1fr", marginBottom: "32px" }}>
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "16px", padding: "24px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "14px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>📄 Top Pages</h2>
+            {stats.pages.length === 0
+              ? <p style={{ color: "#475569", fontSize: "13px", fontFamily: "JetBrains Mono, monospace" }}>No page data yet</p>
+              : stats.pages.slice(0, 8).map((p) => <BarRow key={p.page} label={p.page} count={p.count} max={maxPageCount} color="#00ff41" />)
+            }
           </div>
-
-          {/* Referrers */}
-          <div
-            style={{
-              background: "rgba(255,255,255,0.02)",
-              border: "1px solid #1e293b",
-              borderRadius: "16px",
-              padding: "24px",
-            }}
-          >
-            <h2
-              style={{
-                margin: "0 0 20px",
-                fontSize: "14px",
-                color: "#94a3b8",
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
-              🔗 Traffic Sources
-            </h2>
-            {stats.referrers.length === 0 ? (
-              <p style={{ color: "#475569", fontSize: "13px", fontFamily: "JetBrains Mono, monospace" }}>
-                No referrer data yet
-              </p>
-            ) : (
-              stats.referrers.slice(0, 8).map((r) => (
-                <BarRow
-                  key={r.domain}
-                  label={r.domain}
-                  count={r.count}
-                  max={maxRefCount}
-                  color="#00d4ff"
-                />
-              ))
-            )}
+          <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "16px", padding: "24px" }}>
+            <h2 style={{ margin: "0 0 20px", fontSize: "14px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>🔗 Traffic Sources</h2>
+            {stats.referrers.length === 0
+              ? <p style={{ color: "#475569", fontSize: "13px", fontFamily: "JetBrains Mono, monospace" }}>No referrer data yet</p>
+              : stats.referrers.slice(0, 8).map((r) => <BarRow key={r.domain} label={r.domain} count={r.count} max={maxRefCount} color="#00d4ff" />)
+            }
           </div>
         </div>
 
         {/* Daily breakdown table */}
-        <div
-          style={{
-            background: "rgba(255,255,255,0.02)",
-            border: "1px solid #1e293b",
-            borderRadius: "16px",
-            padding: "24px",
-            overflowX: "auto",
-          }}
-        >
-          <h2
-            style={{
-              margin: "0 0 20px",
-              fontSize: "14px",
-              color: "#94a3b8",
-              fontWeight: 600,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-            }}
-          >
+        <div style={{ background: "rgba(255,255,255,0.02)", border: "1px solid #1e293b", borderRadius: "16px", padding: "24px", overflowX: "auto" }}>
+          <h2 style={{ margin: "0 0 20px", fontSize: "14px", color: "#94a3b8", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase" }}>
             🗓️ Daily Breakdown (Last 30 Days)
           </h2>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
             <thead>
               <tr style={{ borderBottom: "1px solid #1e293b" }}>
                 {["Date", "Visits", "Unique Visitors"].map((h) => (
-                  <th
-                    key={h}
-                    style={{
-                      textAlign: "left",
-                      padding: "8px 12px",
-                      color: "#64748b",
-                      fontWeight: 600,
-                      letterSpacing: "0.05em",
-                      fontFamily: "JetBrains Mono, monospace",
-                      fontSize: "11px",
-                      textTransform: "uppercase",
-                    }}
-                  >
+                  <th key={h} style={{ textAlign: "left", padding: "8px 12px", color: "#64748b", fontWeight: 600, letterSpacing: "0.05em", fontFamily: "JetBrains Mono, monospace", fontSize: "11px", textTransform: "uppercase" }}>
                     {h}
                   </th>
                 ))}
@@ -588,50 +470,19 @@ export default function AdminDashboard() {
               {[...stats.dailyData].reverse().filter(d => d.visits > 0 || d.unique > 0).slice(0, 14).map((d) => {
                 const isToday = d.date === new Date().toISOString().slice(0, 10);
                 return (
-                  <tr
-                    key={d.date}
-                    style={{
-                      borderBottom: "1px solid #0f172a",
-                      background: isToday ? "rgba(0,255,65,0.04)" : "transparent",
-                    }}
-                  >
+                  <tr key={d.date} style={{ borderBottom: "1px solid #0f172a", background: isToday ? "rgba(0,255,65,0.04)" : "transparent" }}>
                     <td style={{ padding: "10px 12px", fontFamily: "JetBrains Mono, monospace" }}>
-                      {isToday ? (
-                        <span>
-                          {d.date}{" "}
-                          <span style={{ fontSize: "10px", color: "#00ff41", background: "#00ff4115", padding: "1px 6px", borderRadius: "4px" }}>
-                            TODAY
-                          </span>
-                        </span>
-                      ) : d.date}
+                      {isToday ? <span>{d.date} <span style={{ fontSize: "10px", color: "#00ff41", background: "#00ff4115", padding: "1px 6px", borderRadius: "4px" }}>TODAY</span></span> : d.date}
                     </td>
-                    <td
-                      style={{
-                        padding: "10px 12px",
-                        color: "#00ff41",
-                        fontWeight: 700,
-                        fontFamily: "JetBrains Mono, monospace",
-                      }}
-                    >
-                      {d.visits}
-                    </td>
-                    <td
-                      style={{
-                        padding: "10px 12px",
-                        color: "#00d4ff",
-                        fontWeight: 700,
-                        fontFamily: "JetBrains Mono, monospace",
-                      }}
-                    >
-                      {d.unique}
-                    </td>
+                    <td style={{ padding: "10px 12px", color: "#00ff41", fontWeight: 700, fontFamily: "JetBrains Mono, monospace" }}>{d.visits}</td>
+                    <td style={{ padding: "10px 12px", color: "#00d4ff", fontWeight: 700, fontFamily: "JetBrains Mono, monospace" }}>{d.unique}</td>
                   </tr>
                 );
               })}
               {stats.dailyData.every(d => d.visits === 0) && (
                 <tr>
                   <td colSpan={3} style={{ padding: "20px 12px", color: "#475569", fontFamily: "JetBrains Mono, monospace", textAlign: "center" }}>
-                    No visit data yet — make sure the tracker is deployed
+                    No visits tracked yet — data appears here as visitors arrive
                   </td>
                 </tr>
               )}
@@ -639,7 +490,6 @@ export default function AdminDashboard() {
           </table>
         </div>
 
-        {/* Footer note */}
         <div style={{ textAlign: "center", marginTop: "32px", color: "#334155", fontSize: "12px", fontFamily: "JetBrains Mono, monospace" }}>
           🔐 This dashboard is private — accessible only with your secret key
           <br />
