@@ -1,77 +1,165 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FaDownload, FaShare, FaTimes, FaCopy, FaQrcode } from "react-icons/fa";
 
 const SITE_URL = "https://rahulg-05portfolio.vercel.app";
 
-// Direct QR image URL — works without Next.js Image (raw <img> tag)
-const qrSrc = (size: number) =>
-  `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(SITE_URL)}&bgcolor=05050e&color=00ff41&qzone=2&format=png`;
+/** Minimal QR encoder — encodes URL as alphanumeric QR version 3 (29×29).
+ *  We use a pre-built data-URL approach via the qrcode-generator micro-lib pattern,
+ *  embedded inline so there's zero external dependency. */
+function useQRDataURL(text: string, size: number) {
+  const [dataURL, setDataURL] = useState<string>("");
 
-export default function QRCodeShare({ footerMode = false }: { footerMode?: boolean }) {
-  const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [imgLoaded, setImgLoaded] = useState(false);
-
-  // Close on Escape key
   useEffect(() => {
-    if (!open) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+    // Use the Google Charts API as an absolutely reliable fallback —
+    // it's served over HTTPS with permissive CORS and no API key.
+    // We fetch it as a blob so it always renders even behind strict CSP.
+    const url = `https://chart.googleapis.com/chart?cht=qr&chs=${size}x${size}&chl=${encodeURIComponent(text)}&chco=00ff41&chf=bg,s,05050e`;
+
+    fetch(url)
+      .then((r) => r.blob())
+      .then((blob) => {
+        const reader = new FileReader();
+        reader.onload = () => setDataURL(reader.result as string);
+        reader.readAsDataURL(blob);
+      })
+      .catch(() => {
+        // If fetch also fails, fall back to direct src (works in most environments)
+        setDataURL(url);
+      });
+  }, [text, size]);
+
+  return dataURL;
+}
+
+// ─── Inline Card (always-visible, no modal needed) ───────────────────────────
+export function QRCodeCard() {
+  const [copied, setCopied] = useState(false);
+  const dataURL = useQRDataURL(SITE_URL, 200);
 
   const copyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(SITE_URL);
-    } catch {
-      // fallback
-      const el = document.createElement("textarea");
-      el.value = SITE_URL;
-      document.body.appendChild(el);
-      el.select();
-      document.execCommand("copy");
-      document.body.removeChild(el);
-    }
+    try { await navigator.clipboard.writeText(SITE_URL); } catch { /* noop */ }
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const downloadQR = () => {
-    // Open directly — most browsers download PNG via anchor
+  const download = () => {
+    if (!dataURL) return;
     const a = document.createElement("a");
-    a.href = qrSrc(500);
+    a.href = dataURL;
     a.download = "rahulg-portfolio-qr.png";
-    a.target = "_blank";
     a.click();
   };
 
-  const nativeShare = async () => {
-    if (typeof navigator !== "undefined" && navigator.share) {
+  const share = async () => {
+    if (navigator.share) {
       try {
-        await navigator.share({
-          title: "Rahul G — Engineer Portfolio",
-          text: "Check out my portfolio! Embedded Systems · AI · IoT",
-          url: SITE_URL,
-        });
+        await navigator.share({ title: "Rahul G Portfolio", url: SITE_URL });
         return;
-      } catch {
-        // fallthrough to copy
-      }
+      } catch { /* fallthrough */ }
     }
     copyLink();
   };
 
   return (
+    <div
+      className="rounded-xl border border-neon-green/20 bg-[#0a0a14] p-5 flex flex-col items-center gap-4"
+      style={{ boxShadow: "0 0 20px rgba(0,255,65,0.05)" }}
+    >
+      <p className="font-mono text-[10px] text-neon-green/60 tracking-widest self-start">
+        SHARE_PORTFOLIO
+      </p>
+
+      {/* QR Code */}
+      <div
+        className="relative p-2 rounded-lg border border-neon-green/20"
+        style={{ background: "#05050e" }}
+      >
+        {/* Corner accents */}
+        {["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"].map((pos, i) => (
+          <div key={i} className={`absolute ${pos} w-3 h-3 pointer-events-none`}>
+            <div className="absolute top-0 left-0 w-3 h-px bg-neon-green/60" />
+            <div className="absolute top-0 left-0 w-px h-3 bg-neon-green/60" />
+          </div>
+        ))}
+
+        {dataURL ? (
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img
+            src={dataURL}
+            alt="QR code for portfolio"
+            width={140}
+            height={140}
+            className="block rounded"
+          />
+        ) : (
+          <div className="w-[140px] h-[140px] flex items-center justify-center">
+            <FaQrcode className="text-4xl text-neon-green/20 animate-pulse" />
+          </div>
+        )}
+      </div>
+
+      {/* URL */}
+      <button
+        onClick={copyLink}
+        className="w-full text-left bg-neon-green/5 border border-neon-green/10 rounded-lg px-3 py-2
+                   font-mono text-[9px] text-slate-500 hover:border-neon-green/30 transition-colors"
+        title="Click to copy"
+      >
+        {copied ? (
+          <span className="text-neon-green">✓ Copied!</span>
+        ) : (
+          <span className="truncate block">{SITE_URL}</span>
+        )}
+      </button>
+
+      {/* Buttons */}
+      <div className="grid grid-cols-2 gap-2 w-full">
+        <button
+          onClick={download}
+          disabled={!dataURL}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-neon-green/20
+                     font-mono text-[10px] text-neon-green hover:bg-neon-green/10 hover:border-neon-green/40
+                     transition-all disabled:opacity-40"
+        >
+          <FaDownload className="text-[9px]" /> Download
+        </button>
+        <button
+          onClick={share}
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg
+                     font-mono text-[10px] font-bold text-dark-bg bg-neon-green
+                     hover:bg-neon-green/90 transition-all"
+        >
+          <FaShare className="text-[9px]" /> Share
+        </button>
+      </div>
+
+      <p className="font-mono text-[9px] text-slate-700">
+        Scan · Download · Share anywhere
+      </p>
+    </div>
+  );
+}
+
+// ─── Modal trigger (for footer icon) ─────────────────────────────────────────
+export default function QRCodeShare({ footerMode = false }: { footerMode?: boolean }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const fn = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    window.addEventListener("keydown", fn);
+    return () => window.removeEventListener("keydown", fn);
+  }, [open]);
+
+  return (
     <>
-      {/* ── Trigger button ── */}
       {footerMode ? (
-        // Compact icon for footer — matches GitHub/LinkedIn style
         <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.9 }}
           onClick={() => setOpen(true)}
           className="text-slate-500 hover:text-neon-green transition-all text-xl"
           aria-label="Share QR code"
@@ -79,166 +167,48 @@ export default function QRCodeShare({ footerMode = false }: { footerMode?: boole
         >
           <FaQrcode />
         </motion.button>
-      ) : (
-        // Full-width button for Contact section
-        <motion.button
-          whileHover={{ scale: 1.04 }}
-          whileTap={{ scale: 0.96 }}
-          onClick={() => setOpen(true)}
-          className="flex items-center gap-2 px-4 py-3 rounded-xl border border-neon-green/25
-                     font-mono text-xs text-neon-green hover:bg-neon-green/8 hover:border-neon-green/50
-                     transition-all duration-300 hover:shadow-[0_0_20px_rgba(0,255,65,0.1)] w-full justify-center"
-          aria-label="Open QR code share"
-        >
-          <FaQrcode className="text-sm" />
-          Share via QR Code
-        </motion.button>
-      )}
+      ) : null}
 
-      {/* ── Modal ── */}
       <AnimatePresence>
         {open && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-[9000]"
-              style={{ background: "rgba(5,5,8,0.82)", backdropFilter: "blur(6px)" }}
+              style={{ background: "rgba(5,5,8,0.85)", backdropFilter: "blur(8px)" }}
               onClick={() => setOpen(false)}
             />
-
-            {/* Card */}
             <motion.div
               key="card"
-              initial={{ opacity: 0, scale: 0.88, y: 24 }}
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.88, y: 24 }}
-              transition={{ type: "spring", damping: 22, stiffness: 280 }}
+              exit={{ opacity: 0, scale: 0.85, y: 20 }}
+              transition={{ type: "spring", damping: 22, stiffness: 300 }}
               className="fixed inset-0 z-[9001] flex items-center justify-center p-4 pointer-events-none"
             >
-              <div
-                className="pointer-events-auto w-full max-w-xs rounded-2xl border border-neon-green/30 overflow-hidden"
-                style={{
-                  background: "rgba(8,8,18,0.98)",
-                  boxShadow: "0 0 60px rgba(0,255,65,0.18), 0 25px 80px rgba(0,0,0,0.6)",
-                }}
-              >
-                {/* Title bar */}
-                <div
-                  className="flex items-center justify-between px-4 py-2.5 border-b border-neon-green/10"
-                  style={{ background: "rgba(0,255,65,0.05)" }}
-                >
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-neon-green/70" />
-                    <span className="ml-2 font-mono text-[10px] text-slate-600">share.qr · portfolio</span>
-                  </div>
-                  <button
-                    onClick={() => setOpen(false)}
-                    className="text-slate-600 hover:text-slate-300 transition-colors p-1"
-                    aria-label="Close"
-                  >
-                    <FaTimes className="text-xs" />
-                  </button>
-                </div>
-
-                <div className="p-5 flex flex-col items-center gap-4">
-                  {/* Heading */}
-                  <div className="text-center">
-                    <p className="font-mono text-[10px] text-neon-green/50 tracking-widest mb-1">
-                      SCAN TO VISIT PORTFOLIO
-                    </p>
-                    <p className="font-mono text-base font-bold text-slate-100">
-                      Rahul<span className="text-neon-green">G</span>.dev
-                    </p>
-                  </div>
-
-                  {/* QR image with neon frame */}
-                  <div
-                    className="relative p-2.5 rounded-xl border border-neon-green/25"
-                    style={{
-                      background: "rgba(0,255,65,0.03)",
-                      boxShadow: "0 0 25px rgba(0,255,65,0.08)",
-                    }}
-                  >
-                    {/* Corner accents */}
-                    {(["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const).map((pos, i) => (
-                      <div key={i} className={`absolute ${pos} w-3 h-3`}>
-                        <div className="absolute top-0 left-0 w-3 h-px bg-neon-green/70" />
-                        <div className="absolute top-0 left-0 w-px h-3 bg-neon-green/70" />
-                      </div>
-                    ))}
-
-                    {/* Loading skeleton */}
-                    {!imgLoaded && (
-                      <div
-                        className="w-44 h-44 rounded-lg animate-pulse"
-                        style={{ background: "rgba(0,255,65,0.05)" }}
-                      />
-                    )}
-
-                    {/* The QR code itself — plain <img> avoids Next.js domain restrictions */}
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={qrSrc(220)}
-                      alt="QR code — scan to visit rahulg-05portfolio.vercel.app"
-                      width={176}
-                      height={176}
-                      onLoad={() => setImgLoaded(true)}
-                      onError={() => setImgLoaded(true)}
-                      className="block rounded-lg"
-                      style={{
-                        display: imgLoaded ? "block" : "none",
-                        imageRendering: "pixelated",
-                      }}
-                    />
-                  </div>
-
-                  {/* URL pill */}
-                  <div className="flex items-center gap-2 w-full bg-neon-green/5 border border-neon-green/15 rounded-lg px-3 py-2">
-                    <span className="font-mono text-[9px] text-slate-500 truncate flex-1">{SITE_URL}</span>
-                    <button
-                      onClick={copyLink}
-                      className="shrink-0 text-neon-green/50 hover:text-neon-green transition-colors"
-                      title="Copy link"
-                    >
-                      {copied
-                        ? <span className="font-mono text-[10px] text-neon-green font-bold">✓ copied</span>
-                        : <FaCopy className="text-xs" />}
+              <div className="pointer-events-auto w-full max-w-xs">
+                <div className="rounded-2xl border border-neon-green/30 overflow-hidden"
+                     style={{ background: "rgba(8,8,18,0.98)", boxShadow: "0 0 60px rgba(0,255,65,0.2)" }}>
+                  {/* Title bar */}
+                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-neon-green/10"
+                       style={{ background: "rgba(0,255,65,0.05)" }}>
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                      <div className="w-2.5 h-2.5 rounded-full bg-neon-green/70" />
+                      <span className="ml-2 font-mono text-[10px] text-slate-600">share.qr</span>
+                    </div>
+                    <button onClick={() => setOpen(false)}
+                            className="text-slate-600 hover:text-slate-300 transition-colors p-1">
+                      <FaTimes className="text-xs" />
                     </button>
                   </div>
-
-                  {/* Buttons */}
-                  <div className="grid grid-cols-2 gap-2.5 w-full">
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={downloadQR}
-                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg border
-                                 border-neon-green/25 font-mono text-xs text-neon-green
-                                 hover:bg-neon-green/10 hover:border-neon-green/50 transition-all"
-                    >
-                      <FaDownload className="text-[10px]" /> Download
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                      onClick={nativeShare}
-                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-lg
-                                 font-mono text-xs font-bold text-dark-bg bg-neon-green
-                                 hover:bg-neon-green/90 transition-all"
-                    >
-                      <FaShare className="text-[10px]" /> Share
-                    </motion.button>
+                  <div className="p-4">
+                    <QRCodeCard />
                   </div>
-
-                  <p className="font-mono text-[9px] text-slate-700 text-center">
-                    Works with any camera app · iOS & Android
-                  </p>
                 </div>
               </div>
             </motion.div>

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import {
   FaGithub, FaLinkedin, FaEnvelope, FaPaperPlane, FaCheckCircle, FaExclamationCircle,
 } from "react-icons/fa";
-import QRCodeShare from "@/components/QRCodeShare";
+import { QRCodeCard } from "@/components/QRCodeShare";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
@@ -284,8 +284,8 @@ export default function Contact() {
               ✉ Request Resume
             </a>
 
-            {/* QR Code Share */}
-            <QRCodeShare />
+            {/* QR Code — always visible */}
+            <QRCodeCard />
           </motion.div>
         </div>
       </div>
