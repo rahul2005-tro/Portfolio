@@ -1,7 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FaGithub, FaLinkedin, FaHeart } from "react-icons/fa";
+import { FaGithub, FaLinkedin, FaHeart, FaQrcode } from "react-icons/fa";
+import QRCodeShare from "@/components/QRCodeShare";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -51,7 +52,7 @@ export default function Footer() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="flex gap-4"
+            className="flex items-center gap-4"
           >
             <a
               href="https://github.com/rahul2005-tro"
@@ -69,6 +70,8 @@ export default function Footer() {
             >
               <FaLinkedin />
             </a>
+            {/* QR share — compact icon trigger */}
+            <QRCodeShare footerMode />
           </motion.div>
         </div>
 
