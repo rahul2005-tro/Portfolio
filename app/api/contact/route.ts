@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     }
 
     // Send via EmailJS REST API (server-side — keys not exposed to client)
-    const EJS_SERVICE = process.env.EMAILJS_SERVICE_ID || "service_1v3431t";
+    const EJS_SERVICE = process.env.EMAILJS_SERVICE_ID || "service_hcjzjod";
     const EJS_TEMPLATE = process.env.EMAILJS_TEMPLATE_ID || "template_o83rjik";
     const EJS_PUBLIC = process.env.EMAILJS_PUBLIC_KEY || "vwaghtAEMKrZjdnZJ";
 
@@ -71,9 +71,9 @@ export async function POST(request: Request) {
 
     if (!ejsRes.ok) {
       const errText = await ejsRes.text();
-      console.error("EmailJS server error:", ejsRes.status, errText);
+      console.error("EmailJS error:", ejsRes.status, errText);
       return NextResponse.json(
-        { error: "Failed to send email. Please use the mail fallback." },
+        { error: `Failed to send email. Please use the mail fallback. (${ejsRes.status}: ${errText})` },
         { status: 502 }
       );
     }
