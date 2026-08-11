@@ -11,6 +11,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import VisitTracker from "@/components/VisitTracker";
 
+
 const siteUrl = "https://rahulg-05portfolio.vercel.app";
 
 export const metadata: Metadata = {

@@ -3,70 +3,21 @@
 import { motion } from "framer-motion";
 
 /* Themed floating stickers for blank hero/section areas.
-   Each sticker is a mini terminal/badge that subtly floats. */
+   Each sticker is a mini terminal/badge that subtly floats.
+   PERF: float animation moved to CSS keyframe (GPU composited), only entry animation uses framer-motion */
 
 const STICKERS = [
   /* ─── Left side ─── */
-  {
-    id: "esp32",
-    x: "3%", y: "18%",
-    content: ["ESP32", "@ 240MHz"],
-    color: "#ff9500",
-    delay: 0,
-  },
-  {
-    id: "patent",
-    x: "2%", y: "42%",
-    content: ["[PATENT]", "VICHARAH ELS"],
-    color: "#9f00ff",
-    delay: 0.4,
-  },
-  {
-    id: "sih",
-    x: "1%", y: "68%",
-    content: ["🏆 SIH 2025", "WINNER"],
-    color: "#ffd700",
-    delay: 0.8,
-  },
-
+  { id: "esp32",   x: "3%",  y: "18%", content: ["ESP32", "@ 240MHz"],     color: "#ff9500", delay: 0   },
+  { id: "patent",  x: "2%",  y: "42%", content: ["[PATENT]", "VICHARAH ELS"], color: "#9f00ff", delay: 0.4 },
+  { id: "sih",     x: "1%",  y: "68%", content: ["🏆 SIH 2025", "WINNER"],  color: "#ffd700", delay: 0.8 },
   /* ─── Right side ─── */
-  {
-    id: "ai",
-    x: "88%", y: "20%",
-    content: ["TensorFlow", "v2.14 ✓"],
-    color: "#00d4ff",
-    delay: 0.2,
-  },
-  {
-    id: "lora",
-    x: "89%", y: "44%",
-    content: ["LoRa SX1278", "RF ◈"],
-    color: "#00ff41",
-    delay: 0.6,
-  },
-  {
-    id: "stm",
-    x: "87%", y: "70%",
-    content: ["STM32 ●", "ONLINE"],
-    color: "#ff9500",
-    delay: 1.0,
-  },
-
+  { id: "ai",      x: "88%", y: "20%", content: ["TensorFlow", "v2.14 ✓"], color: "#00d4ff", delay: 0.2 },
+  { id: "lora",    x: "89%", y: "44%", content: ["LoRa SX1278", "RF ◈"],   color: "#00ff41", delay: 0.6 },
+  { id: "stm",     x: "87%", y: "70%", content: ["STM32 ●", "ONLINE"],     color: "#ff9500", delay: 1.0 },
   /* ─── Mid floating chips ─── */
-  {
-    id: "yolo",
-    x: "6%", y: "88%",
-    content: ["YOLOv3", "99.2% acc"],
-    color: "#9f00ff",
-    delay: 0.3,
-  },
-  {
-    id: "firebase",
-    x: "86%", y: "88%",
-    content: ["Firebase", "LIVE ●"],
-    color: "#ff9500",
-    delay: 0.7,
-  },
+  { id: "yolo",    x: "6%",  y: "88%", content: ["YOLOv3", "99.2% acc"],   color: "#9f00ff", delay: 0.3 },
+  { id: "firebase",x: "86%", y: "88%", content: ["Firebase", "LIVE ●"],    color: "#ff9500", delay: 0.7 },
 ];
 
 interface StickerProps {
@@ -79,17 +30,10 @@ function Sticker({ content, color, delay }: StickerProps) {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.7 }}
-      animate={{
-        opacity: [0, 1, 1, 1],
-        scale: [0.7, 1, 1, 1],
-        y: [0, -6, 0, -6, 0],
-      }}
-      transition={{
-        opacity: { delay, duration: 0.5 },
-        scale:   { delay, duration: 0.5 },
-        y:       { delay: delay + 0.5, duration: 4, repeat: Infinity, ease: "easeInOut" },
-      }}
-      className="absolute pointer-events-none"
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.5 }}
+      className="absolute pointer-events-none sticker-float"
+      style={{ animationDelay: `${delay + 0.5}s` }}
       aria-hidden
     >
       <div
@@ -108,13 +52,11 @@ function Sticker({ content, color, delay }: StickerProps) {
             {line}
           </div>
         ))}
-        {/* pulse dot */}
+        {/* pulse dot — CSS animation instead of framer-motion */}
         <div className="flex justify-center mt-1">
-          <motion.div
-            className="w-1 h-1 rounded-full"
-            style={{ background: color }}
-            animate={{ opacity: [0.3, 1, 0.3] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: delay }}
+          <div
+            className="w-1 h-1 rounded-full sticker-pulse"
+            style={{ background: color, animationDelay: `${delay}s` }}
           />
         </div>
       </div>
@@ -124,16 +66,36 @@ function Sticker({ content, color, delay }: StickerProps) {
 
 export default function FloatingStickers() {
   return (
-    <div className="hidden lg:block fixed inset-0 z-[5] pointer-events-none overflow-hidden">
-      {STICKERS.map((s) => (
-        <div
-          key={s.id}
-          className="absolute"
-          style={{ left: s.x, top: s.y }}
-        >
-          <Sticker content={s.content} color={s.color} delay={s.delay} />
-        </div>
-      ))}
-    </div>
+    <>
+      {/* CSS keyframes injected once for sticker float + pulse */}
+      <style>{`
+        @keyframes sticker-float {
+          0%, 100% { transform: translateY(0px); }
+          50%       { transform: translateY(-6px); }
+        }
+        @keyframes sticker-pulse {
+          0%, 100% { opacity: 0.3; }
+          50%       { opacity: 1; }
+        }
+        .sticker-float {
+          animation: sticker-float 4s ease-in-out infinite;
+          will-change: transform;
+        }
+        .sticker-pulse {
+          animation: sticker-pulse 1.5s ease-in-out infinite;
+        }
+      `}</style>
+      <div className="hidden lg:block fixed inset-0 z-[5] pointer-events-none overflow-hidden">
+        {STICKERS.map((s) => (
+          <div
+            key={s.id}
+            className="absolute"
+            style={{ left: s.x, top: s.y }}
+          >
+            <Sticker content={s.content} color={s.color} delay={s.delay} />
+          </div>
+        ))}
+      </div>
+    </>
   );
 }

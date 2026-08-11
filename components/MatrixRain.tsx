@@ -17,11 +17,10 @@ export default function MatrixRain() {
       canvas.height = window.innerHeight;
     };
     resize();
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize, { passive: true });
 
     const fontSize = 14;
-    const chars =
-      "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
     const charArray = chars.split("");
 
     let cols = Math.floor(canvas.width / fontSize);
@@ -30,36 +29,35 @@ export default function MatrixRain() {
     );
 
     let animFrameId: number;
+    let frameCount = 0;
 
     const draw = () => {
-      ctx.fillStyle = "rgba(5, 5, 8, 0.04)";
+      animFrameId = requestAnimationFrame(draw);
+      frameCount++;
+      // ~20fps throttle: skip 2 out of every 3 frames
+      if (frameCount % 3 !== 0) return;
+
+      ctx.fillStyle = "rgba(5, 5, 8, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#00ff41";
       ctx.font = `${fontSize}px 'JetBrains Mono', monospace`;
+      ctx.fillStyle = "rgba(0, 255, 65, 0.15)";
+      ctx.globalAlpha = 1;
 
       cols = Math.floor(canvas.width / fontSize);
 
-      for (let i = 0; i < drops.length; i++) {
+      for (let i = 0; i < Math.min(drops.length, cols); i++) {
         const char = charArray[Math.floor(Math.random() * charArray.length)];
         const x = i * fontSize;
         const y = drops[i] * fontSize;
-
-        // Leading char brighter
         if (drops[i] > 0) {
-          ctx.fillStyle = "#00ff41";
-          ctx.globalAlpha = 0.15;
           ctx.fillText(char, x, y);
         }
-
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
         }
         drops[i]++;
       }
-
-      ctx.globalAlpha = 1;
-      animFrameId = requestAnimationFrame(draw);
     };
 
     animFrameId = requestAnimationFrame(draw);
@@ -73,8 +71,8 @@ export default function MatrixRain() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 0.35 }}
+      className="absolute inset-0 z-0 pointer-events-none"
+      style={{ opacity: 0.25, willChange: "contents" }}
     />
   );
 }
