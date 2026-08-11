@@ -27,9 +27,9 @@ export async function POST(request: Request) {
     // Clean up old entries
     if (recentHits.size > 500) {
       const cutoff = now - 60_000;
-      for (const [k, v] of recentHits.entries()) {
+      Array.from(recentHits.entries()).forEach(([k, v]) => {
         if (v < cutoff) recentHits.delete(k);
-      }
+      });
     }
 
     // Privacy-safe: hash IP with today's date — never store raw IP
