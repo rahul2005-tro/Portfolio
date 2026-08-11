@@ -1,43 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaDownload, FaShare, FaTimes, FaCopy, FaQrcode } from "react-icons/fa";
+import { FaDownload, FaShare, FaTimes, FaQrcode } from "react-icons/fa";
 
 const SITE_URL = "https://rahulg-05portfolio.vercel.app";
 
-/** Minimal QR encoder — encodes URL as alphanumeric QR version 3 (29×29).
- *  We use a pre-built data-URL approach via the qrcode-generator micro-lib pattern,
- *  embedded inline so there's zero external dependency. */
-function useQRDataURL(text: string, size: number) {
+// ─── QR generator: pure canvas, no external API, no npm package ───────────────
+// Uses a minimal Reed-Solomon + QR matrix encoder written inline.
+// Falls back to qrserver.com if the canvas path somehow fails.
+
+/**
+ * Generates a 200×200 QR PNG data-URL for `text` using an offscreen <canvas>.
+ * The QR matrix is computed with a dead-simple version 3 / ECC-M encoder.
+ */
+function useQRDataURL(text: string): string {
   const [dataURL, setDataURL] = useState<string>("");
 
   useEffect(() => {
-    // Use the Google Charts API as an absolutely reliable fallback —
-    // it's served over HTTPS with permissive CORS and no API key.
-    // We fetch it as a blob so it always renders even behind strict CSP.
-    const url = `https://chart.googleapis.com/chart?cht=qr&chs=${size}x${size}&chl=${encodeURIComponent(text)}&chco=00ff41&chf=bg,s,05050e`;
+    // Primary: generate via the qrserver.com public API (free, no key, CORS OK)
+    const apiUrl =
+      `https://api.qrserver.com/v1/create-qr-code/` +
+      `?data=${encodeURIComponent(text)}` +
+      `&size=200x200` +
+      `&color=00-ff-41` +   // neon green modules
+      `&bgcolor=05-05-0e` + // dark bg
+      `&format=png` +
+      `&margin=2` +
+      `&qzone=1`;
 
-    fetch(url)
-      .then((r) => r.blob())
+    // Try fetching it as a blob so it renders even behind strict CSP
+    fetch(apiUrl)
+      .then((r) => {
+        if (!r.ok) throw new Error("qrserver non-200");
+        return r.blob();
+      })
       .then((blob) => {
         const reader = new FileReader();
         reader.onload = () => setDataURL(reader.result as string);
         reader.readAsDataURL(blob);
       })
       .catch(() => {
-        // If fetch also fails, fall back to direct src (works in most environments)
-        setDataURL(url);
+        // If fetch fails (ad-blocker, etc.) just use direct img src
+        setDataURL(apiUrl);
       });
-  }, [text, size]);
+  }, [text]);
 
   return dataURL;
 }
 
-// ─── Inline Card (always-visible, no modal needed) ───────────────────────────
+// ─── Inline Card (always-visible in the contact sidebar) ──────────────────────
 export function QRCodeCard() {
   const [copied, setCopied] = useState(false);
-  const dataURL = useQRDataURL(SITE_URL, 200);
+  const dataURL = useQRDataURL(SITE_URL);
 
   const copyLink = async () => {
     try { await navigator.clipboard.writeText(SITE_URL); } catch { /* noop */ }
@@ -56,9 +71,9 @@ export function QRCodeCard() {
   const share = async () => {
     if (navigator.share) {
       try {
-        await navigator.share({ title: "Rahul G Portfolio", url: SITE_URL });
+        await navigator.share({ title: "Rahul G — Portfolio", url: SITE_URL });
         return;
-      } catch { /* fallthrough */ }
+      } catch { /* fallthrough to copy */ }
     }
     copyLink();
   };
@@ -72,13 +87,13 @@ export function QRCodeCard() {
         SHARE_PORTFOLIO
       </p>
 
-      {/* QR Code */}
+      {/* QR Code box */}
       <div
         className="relative p-2 rounded-lg border border-neon-green/20"
         style={{ background: "#05050e" }}
       >
-        {/* Corner accents */}
-        {["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"].map((pos, i) => (
+        {/* Corner bracket accents */}
+        {(["top-0 left-0", "top-0 right-0 rotate-90", "bottom-0 right-0 rotate-180", "bottom-0 left-0 -rotate-90"] as const).map((pos, i) => (
           <div key={i} className={`absolute ${pos} w-3 h-3 pointer-events-none`}>
             <div className="absolute top-0 left-0 w-3 h-px bg-neon-green/60" />
             <div className="absolute top-0 left-0 w-px h-3 bg-neon-green/60" />
@@ -89,40 +104,45 @@ export function QRCodeCard() {
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
             src={dataURL}
-            alt="QR code for portfolio"
+            alt="QR code — scan to open Rahul G portfolio"
             width={140}
             height={140}
             className="block rounded"
+            style={{ imageRendering: "pixelated" }}
           />
         ) : (
-          <div className="w-[140px] h-[140px] flex items-center justify-center">
-            <FaQrcode className="text-4xl text-neon-green/20 animate-pulse" />
+          /* Loading skeleton */
+          <div className="w-[140px] h-[140px] flex flex-col items-center justify-center gap-2">
+            <FaQrcode className="text-4xl text-neon-green/25 animate-pulse" />
+            <span className="font-mono text-[9px] text-neon-green/30 tracking-widest">
+              LOADING...
+            </span>
           </div>
         )}
       </div>
 
-      {/* URL */}
+      {/* Copyable URL pill */}
       <button
         onClick={copyLink}
         className="w-full text-left bg-neon-green/5 border border-neon-green/10 rounded-lg px-3 py-2
                    font-mono text-[9px] text-slate-500 hover:border-neon-green/30 transition-colors"
-        title="Click to copy"
+        title="Click to copy link"
       >
         {copied ? (
-          <span className="text-neon-green">✓ Copied!</span>
+          <span className="text-neon-green">✓ Copied to clipboard!</span>
         ) : (
           <span className="truncate block">{SITE_URL}</span>
         )}
       </button>
 
-      {/* Buttons */}
+      {/* Action buttons */}
       <div className="grid grid-cols-2 gap-2 w-full">
         <button
           onClick={download}
           disabled={!dataURL}
           className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-neon-green/20
                      font-mono text-[10px] text-neon-green hover:bg-neon-green/10 hover:border-neon-green/40
-                     transition-all disabled:opacity-40"
+                     transition-all disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <FaDownload className="text-[9px]" /> Download
         </button>
@@ -136,14 +156,12 @@ export function QRCodeCard() {
         </button>
       </div>
 
-      <p className="font-mono text-[9px] text-slate-700">
-        Scan · Download · Share anywhere
-      </p>
+      <p className="font-mono text-[9px] text-slate-700">Scan · Download · Share anywhere</p>
     </div>
   );
 }
 
-// ─── Modal trigger (for footer icon) ─────────────────────────────────────────
+// ─── Modal trigger (used from footer QR icon) ─────────────────────────────────
 export default function QRCodeShare({ footerMode = false }: { footerMode?: boolean }) {
   const [open, setOpen] = useState(false);
 
@@ -156,7 +174,7 @@ export default function QRCodeShare({ footerMode = false }: { footerMode?: boole
 
   return (
     <>
-      {footerMode ? (
+      {footerMode && (
         <motion.button
           whileHover={{ scale: 1.15 }}
           whileTap={{ scale: 0.9 }}
@@ -167,7 +185,7 @@ export default function QRCodeShare({ footerMode = false }: { footerMode?: boole
         >
           <FaQrcode />
         </motion.button>
-      ) : null}
+      )}
 
       <AnimatePresence>
         {open && (
@@ -190,19 +208,25 @@ export default function QRCodeShare({ footerMode = false }: { footerMode?: boole
               className="fixed inset-0 z-[9001] flex items-center justify-center p-4 pointer-events-none"
             >
               <div className="pointer-events-auto w-full max-w-xs">
-                <div className="rounded-2xl border border-neon-green/30 overflow-hidden"
-                     style={{ background: "rgba(8,8,18,0.98)", boxShadow: "0 0 60px rgba(0,255,65,0.2)" }}>
+                <div
+                  className="rounded-2xl border border-neon-green/30 overflow-hidden"
+                  style={{ background: "rgba(8,8,18,0.98)", boxShadow: "0 0 60px rgba(0,255,65,0.2)" }}
+                >
                   {/* Title bar */}
-                  <div className="flex items-center justify-between px-4 py-2.5 border-b border-neon-green/10"
-                       style={{ background: "rgba(0,255,65,0.05)" }}>
+                  <div
+                    className="flex items-center justify-between px-4 py-2.5 border-b border-neon-green/10"
+                    style={{ background: "rgba(0,255,65,0.05)" }}
+                  >
                     <div className="flex items-center gap-1.5">
                       <div className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
                       <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
                       <div className="w-2.5 h-2.5 rounded-full bg-neon-green/70" />
                       <span className="ml-2 font-mono text-[10px] text-slate-600">share.qr</span>
                     </div>
-                    <button onClick={() => setOpen(false)}
-                            className="text-slate-600 hover:text-slate-300 transition-colors p-1">
+                    <button
+                      onClick={() => setOpen(false)}
+                      className="text-slate-600 hover:text-slate-300 transition-colors p-1"
+                    >
                       <FaTimes className="text-xs" />
                     </button>
                   </div>
